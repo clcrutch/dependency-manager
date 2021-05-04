@@ -53,7 +53,8 @@ Task("Push")
 
     NuGetPush(GetFiles("**/Clcrutch.DependencyManager.*.nupkg"), new NuGetPushSettings
     {
-        ApiKey = nugetApiKey
+        ApiKey = nugetApiKey,
+        Source = "https://api.nuget.org/v3/index.json"
     });
 });
 
