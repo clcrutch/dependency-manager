@@ -103,10 +103,11 @@ namespace DependencyManager.Providers.Windows
             await process.WaitForExitAsync();
             var packageString = await process.StandardOutput.ReadToEndAsync();
             var packageLines = packageString.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+            var firstLine = packageLines.First();
             var lastLine = packageLines.Last();
 
             return (from l in packageLines
-                    where l != lastLine
+                    where l != firstLine && l != lastLine
                     select l.Split(' ')).ToDictionary(s => s[0], s => s[1]);
         }
     }
