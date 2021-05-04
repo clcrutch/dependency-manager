@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "DependencyManager": {
+      "commandName": "Project",
+      "commandLineArgs": "install",
+      "remoteDebugEnabled": false,
+      "remoteDebugMachine": "DESKTOP-NOHL35B",
+      "authenticationMode": "None"
+    }
+  }
+}

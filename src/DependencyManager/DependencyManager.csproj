@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>depend</ToolCommandName>
+    <PackageId>Clcrutch.DependencyManager</PackageId>
+    <Authors>Chris Crutchfield</Authors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="3.1.0" />
+    <PackageReference Include="Nerdbank.GitVersioning" Version="3.4.194">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DependencyManager.Core\DependencyManager.Core.csproj" />
+    <ProjectReference Include="..\DependencyManager.Lib\DependencyManager.Lib.csproj" />
+    <ProjectReference Include="..\DependencyManager.Providers.Default\DependencyManager.Providers.Default.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="dependencies.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
