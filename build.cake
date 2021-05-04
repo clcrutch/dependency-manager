@@ -46,10 +46,10 @@ Task("Pack")
 
 Task("Push")
     .IsDependentOn("Pack")
-    .WithCriteria(!string.IsNullOrWhiteSpace(EnvironmentVariable("NuGetApiKey")))
+    .WithCriteria(!string.IsNullOrWhiteSpace(EnvironmentVariable("NUGET_API_KEY")))
     .Does(() =>
 {
-    var nugetApiKey = EnvironmentVariable("NuGetApiKey");
+    var nugetApiKey = EnvironmentVariable("NUGET_API_KEY");
 
     NuGetPush(GetFiles("**/Clcrutch.DependencyManager.*.nupkg"), new NuGetPushSettings
     {
