@@ -1,0 +1,76 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:DependencyManager.Gui.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="200"
+        Width="400" Height="200"
+        x:Class="DependencyManager.Gui.Views.MainWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Missing Dependencies">
+
+  <Design.DataContext>
+      <vm:MainWindowViewModel/>
+  </Design.DataContext>
+
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="Auto" />
+    </Grid.ColumnDefinitions>
+
+    <TextBlock Grid.Row="0"
+               Grid.ColumnSpan="3"
+               FontSize="24"
+               Margin="10 10 10 0">
+      Detected Missing Dependencies
+    </TextBlock>
+    
+    <TextBlock Grid.Row="1"
+               Grid.ColumnSpan="3"
+               TextWrapping="Wrap"
+               FontSize="16"
+               Margin="10 10 10 10">
+      The dependency manager has detected missing packages. Would you like to install them now?
+    </TextBlock>
+
+    <Button Grid.Row="2"
+            Grid.Column="1"
+            Command="{Binding YesClick}"
+            Height="30"
+            Width="75"
+            Margin="10 10 0 10">
+      <StackPanel Orientation="Horizontal"
+                  HorizontalAlignment="Center">
+        <Image Source="{Binding Shield}"
+               IsVisible="{Binding AdministratorRequired}" />
+        <TextBlock Margin="3 0 0 0">Yes</TextBlock>
+      </StackPanel>
+    </Button>
+
+    <Button Grid.Row="2"
+            Grid.Column="2"
+            Command="{Binding NoClick}"
+            Height="30"
+            Width="75"
+            Margin="10 10 10 10">
+      <TextBlock HorizontalAlignment="Center">No</TextBlock>
+    </Button>
+
+    <Panel Grid.ColumnSpan="3"
+           Grid.RowSpan="3"
+           Background="#a0ffffff"
+           IsVisible="{Binding IsInstalling}">
+      <ProgressBar Height="26"
+                   IsIndeterminate="True" />
+    </Panel>
+  </Grid>
+
+</Window>

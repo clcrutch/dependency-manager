@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DependencyManager.Core\DependencyManager.Core.csproj" />
+    <ProjectReference Include="..\Core\DependencyManager.Core.csproj" />
   </ItemGroup>
 
 </Project>

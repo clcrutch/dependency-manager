@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DependencyManager.Gui": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Users\\Chris\\Repos\\personal\\DependencyManager\\src\\DependencyManager.Console\\bin\\Debug\\net5.0\\DependencyManager.exe\""
+    }
+  }
+}

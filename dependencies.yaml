@@ -1,4 +1,5 @@
 windows:
   chocolatey:
+    adobereader:
     visualstudio2019community:
-    visualstudio2019-workload-netcoretools:
+    vscode:

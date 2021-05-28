@@ -1,16 +1,18 @@
-﻿using DependencyManager.Core.Providers;
+﻿using DependencyManager.Console.Commands;
+using DependencyManager.Core.Providers;
 using DependencyManager.Lib;
 using DependencyManager.Providers.Default;
 using McMaster.Extensions.CommandLineUtils;
 using System;
 using System.Threading.Tasks;
 
-namespace DependencyManager
+namespace DependencyManager.Console
 {
     [Subcommand(typeof(InstallCommand))]
+    [Subcommand(typeof(TestCommand))]
     class Program
     {
-        static void Main(string[] args) =>
+        static int Main(string[] args) =>
             CommandLineApplication.Execute<Program>(args);
 
         private void OnExecute(CommandLineApplication app)

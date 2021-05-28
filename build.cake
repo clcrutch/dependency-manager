@@ -1,5 +1,5 @@
 var target = Argument("target", "Push");
-var configuration = Argument("configuration", "Release");
+var configuration = Argument("configuration", "Release-net5");
 
 //////////////////////////////////////////////////////////////////////
 // TASKS

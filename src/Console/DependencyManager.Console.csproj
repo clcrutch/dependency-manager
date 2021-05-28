@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -7,6 +7,7 @@
     <ToolCommandName>depend</ToolCommandName>
     <PackageId>Clcrutch.DependencyManager</PackageId>
     <Authors>Chris Crutchfield</Authors>
+    <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,15 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DependencyManager.Core\DependencyManager.Core.csproj" />
-    <ProjectReference Include="..\DependencyManager.Lib\DependencyManager.Lib.csproj" />
-    <ProjectReference Include="..\DependencyManager.Providers.Default\DependencyManager.Providers.Default.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="dependencies.yaml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <ProjectReference Include="..\Core\DependencyManager.Core.csproj" />
+    <ProjectReference Include="..\Lib\DependencyManager.Lib.csproj" />
+    <ProjectReference Include="..\Providers.Default\DependencyManager.Providers.Default.csproj" />
   </ItemGroup>
 
 </Project>

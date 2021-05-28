@@ -9,6 +9,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace DependencyManager.Providers.Windows
@@ -97,17 +98,22 @@ namespace DependencyManager.Providers.Windows
             {
                 FileName = "choco",
                 Arguments = "list --local-only",
-                RedirectStandardOutput = true
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
             });
 
             await process.WaitForExitAsync();
             var packageString = await process.StandardOutput.ReadToEndAsync();
-            var packageLines = packageString.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+            var packageLines = packageString.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
+
+            var index = packageLines.IndexOf((from l in packageLines
+                                              where Regex.Match(l, "[0-9]+ packages installed.").Success
+                                              select l).Single());
+
             var firstLine = packageLines.First();
             var lastLine = packageLines.Last();
 
-            return (from l in packageLines
-                    where l != firstLine && l != lastLine
+            return (from l in packageLines.Skip(1).Take(index - 1)
                     select l.Split(' ')).ToDictionary(s => s[0], s => s[1]);
         }
     }
