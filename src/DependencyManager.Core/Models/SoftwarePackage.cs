@@ -66,6 +66,11 @@ namespace DependencyManager.Core.Models
         {
             await InitializeAsync();
 
+            if (provider.TestRequiresAdmin && !await operatingSystem.IsUserAdminAsync())
+            {
+                throw new AdministratorRequiredException();
+            }
+
             return await provider.TestPackageInstalledAsync(this);
         }
 
@@ -73,7 +78,7 @@ namespace DependencyManager.Core.Models
         {
             if (await provider.InitializationPendingAsync())
             {
-                if (provider.RequiresAdmin && !await operatingSystem.IsUserAdminAsync())
+                if (provider.InstallRequiresAdmin && !await operatingSystem.IsUserAdminAsync())
                 {
                     throw new AdministratorRequiredException();
                 }

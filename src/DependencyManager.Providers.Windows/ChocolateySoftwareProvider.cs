@@ -16,22 +16,22 @@ using System.Threading.Tasks;
 
 namespace DependencyManager.Providers.Windows
 {
-    public class ChocolateySoftwareProvider : ISoftwareProvider
+    public class ChocolateySoftwareProvider : SoftwareProviderBase
     {
-        private readonly IDependencyConfigurationProvider dependencyConfigurationProvider;
-        private readonly IOperatingSystemProvider operatingSystemProvider;
+        public override bool InstallRequiresAdmin => true;
 
-        public bool RequiresAdmin => true;
+        public override bool TestRequiresAdmin => false;
+
+        protected override string SectionName => "chocolatey";
 
         public ChocolateySoftwareProvider(
             IDependencyConfigurationProvider dependencyConfigurationProvider,
             IOperatingSystemProvider operatingSystemProvider)
+            : base(dependencyConfigurationProvider, operatingSystemProvider)
         {
-            this.dependencyConfigurationProvider = dependencyConfigurationProvider;
-            this.operatingSystemProvider = operatingSystemProvider;
         }
 
-        public async Task InitializeAsync()
+        public override async Task InitializeAsync()
         {
             using var client = new WebClient();
             var script = await client.DownloadStringTaskAsync("https://chocolatey.org/install.ps1");
@@ -49,22 +49,10 @@ namespace DependencyManager.Providers.Windows
                 $"{Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "chocolatey", "bin")}");
         }
 
-        public Task<bool> InitializationPendingAsync() =>
-            Task.FromResult(!Environment
-                .GetEnvironmentVariable("PATH")
-                .Split(';', StringSplitOptions.RemoveEmptyEntries)
-                .Any(p => File.Exists(Path.Combine(p, "choco.exe"))));
+        public override async Task<bool> InitializationPendingAsync() =>
+            string.IsNullOrEmpty(await operatingSystemProvider.GetFullExecutablePathAsync("choco.exe"));
 
-        public async Task<IEnumerable<SoftwarePackage>> GetSoftwarePackagesAsync()
-        {
-            Dictionary<object, object> yaml = await dependencyConfigurationProvider.GetSoftwareConfigurationAsync();
-            var packages = yaml["chocolatey"] as Dictionary<object, object>;
-
-            return (from p in packages
-                    select new SoftwarePackage(p, this, operatingSystemProvider)).ToArray();
-        }
-
-        public async Task InstallPackageAsync(SoftwarePackage package)
+        public override async Task InstallPackageAsync(SoftwarePackage package)
         {
             var process = Process.Start(new ProcessStartInfo
             {
@@ -80,13 +68,13 @@ namespace DependencyManager.Providers.Windows
             }
         }
 
-        public async Task<bool> TestPackageInstalledAsync(SoftwarePackage package)
+        public override async Task<bool> TestPackageInstalledAsync(SoftwarePackage package)
         {
             var installedPackages = await GetInstalledPackagesAsync();
             return installedPackages.ContainsKey(package.PackageName);
         }
 
-        public Task<bool> TestPlatformAsync() =>
+        public override Task<bool> TestPlatformAsync() =>
             Task.FromResult(OperatingSystem.IsWindows());
 
         private async Task<Dictionary<string, string>> GetInstalledPackagesAsync()
@@ -111,7 +99,8 @@ namespace DependencyManager.Providers.Windows
             var lastLine = packageLines.Last();
 
             return (from l in packageLines.Skip(1).Take(index - 1)
-                    select l.Split(' ')).ToDictionary(s => s[0], s => s[1]);
+                    where !string.IsNullOrWhiteSpace(l)
+                    select l.Trim().Split(' ')).ToDictionary(s => s[0], s => s[1]);
         }
     }
 }

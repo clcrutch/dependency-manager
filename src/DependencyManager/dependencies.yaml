@@ -1,12 +1,3 @@
-windows:
-  platform: windows
-  architecture: all
-  chocolatey:
-    visualstudio2019community:
-    visualstudio2019-workload-netcoretools:
-    vscode:
-        name: vscode
-
 all:
   platform: all
   architecture: all
@@ -17,3 +8,20 @@ all:
     VisualStudioExptTeam.vscodeintellicode:
         dependencies:
             - vscode
+
+windows:
+  platform: windows
+  architecture: all
+  chocolatey:
+    visualstudio2019community:
+    visualstudio2019-workload-netcoretools:
+    vscode:
+        name: vscode
+
+windows10:
+  platform: windows
+  architecture: all
+  version: 10.0.18362
+  feature:
+    Microsoft-Windows-Subsystem-Linux:
+    VirtualMachinePlatform:

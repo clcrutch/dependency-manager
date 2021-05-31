@@ -9,39 +9,31 @@ using DependencyManager.Core;
 
 namespace DependencyManager.Providers.VSCode
 {
-    public class VSCodeSoftwareProvider : ISoftwareProvider
+    public class VSCodeSoftwareProvider : SoftwareProviderBase
     {
-        private readonly IDependencyConfigurationProvider dependencyConfigurationProvider;
-        private readonly IOperatingSystemProvider operatingSystemProvider;
+        public override bool InstallRequiresAdmin => false;
 
-        public bool RequiresAdmin => false;
+        public override bool TestRequiresAdmin => false;
+
+        protected override string SectionName => "vscode";
 
         public VSCodeSoftwareProvider(
             IDependencyConfigurationProvider dependencyConfigurationProvider, 
             IOperatingSystemProvider operatingSystemProvider)
+            : base (dependencyConfigurationProvider, operatingSystemProvider)
+
         {
-            this.dependencyConfigurationProvider = dependencyConfigurationProvider;
-            this.operatingSystemProvider = operatingSystemProvider;
         }
 
-        public async Task<IEnumerable<SoftwarePackage>> GetSoftwarePackagesAsync()
-        {
-            Dictionary<object, object> yaml = await dependencyConfigurationProvider.GetSoftwareConfigurationAsync();
-            var packages = yaml["vscode"] as Dictionary<object, object>;
-
-            return (from p in packages
-                    select new SoftwarePackage(p, this, operatingSystemProvider)).ToArray();
-        }
-
-        public Task<bool> InitializationPendingAsync() =>
+        public override Task<bool> InitializationPendingAsync() =>
             Task.FromResult(false);
 
-        public Task InitializeAsync()
+        public override Task InitializeAsync()
         {
             throw new NotImplementedException();
         }
 
-        public async Task InstallPackageAsync(SoftwarePackage package)
+        public override async Task InstallPackageAsync(SoftwarePackage package)
         {
             var process = Process.Start(new ProcessStartInfo
             {
@@ -57,7 +49,7 @@ namespace DependencyManager.Providers.VSCode
             }
         }
 
-        public async Task<bool> TestPackageInstalledAsync(SoftwarePackage package)
+        public override async Task<bool> TestPackageInstalledAsync(SoftwarePackage package)
         {
             var process = Process.Start(new ProcessStartInfo
             {
@@ -74,7 +66,7 @@ namespace DependencyManager.Providers.VSCode
             return packageLines.Contains(package.PackageName);
         }
 
-        public async Task<bool> TestPlatformAsync() =>
+        public override async Task<bool> TestPlatformAsync() =>
             !string.IsNullOrEmpty(await operatingSystemProvider.GetFullExecutablePathAsync("code"));
     }
 }

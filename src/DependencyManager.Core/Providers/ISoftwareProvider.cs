@@ -9,7 +9,8 @@ namespace DependencyManager.Core.Providers
 {
     public interface ISoftwareProvider
     {
-        bool RequiresAdmin { get; }
+        bool InstallRequiresAdmin { get; }
+        bool TestRequiresAdmin { get; }
 
         Task InitializeAsync();
         Task<bool> InitializationPendingAsync();

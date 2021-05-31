@@ -40,6 +40,7 @@ namespace DependencyManager.Lib
             if (OperatingSystem.IsWindows())
             {
                 services.AddTransient<ISoftwareProvider, ChocolateySoftwareProvider>();
+                services.AddTransient<ISoftwareProvider, WindowsFeatureSoftwareProvider>();
                 services.AddTransient<IOperatingSystemProvider, WindowsOperatingSystemProvider>();
             }
 

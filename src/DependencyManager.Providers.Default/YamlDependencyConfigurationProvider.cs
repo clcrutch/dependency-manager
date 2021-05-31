@@ -38,15 +38,39 @@ namespace DependencyManager.Providers.Default
                                     .Where(s => TestIfRelevantAsync(s.Value))
                                     .Select(s => s.Value as IEnumerable<KeyValuePair<object, object>>)
                                     .SelectMany(s => s)
+                                    .Where(g => g.Key.ToString() != "platform" && g.Key.ToString() != "architecture" && g.Key.ToString() != "version")
                                     .ToArrayAsync();
 
             return Combine(relevantSections);
         }
 
-        private Dictionary<object, object> Combine(IEnumerable<KeyValuePair<object, object>> groups) =>
-            (from g in groups
-             where g.Key.ToString() != "platform" && g.Key.ToString() != "architecture"
-             select g).ToDictionary(x => x.Key as object, x => x.Value);
+        private Dictionary<object, object> Combine(IEnumerable<KeyValuePair<object, object>> groups)
+        {
+            var @return = new Dictionary<object, object>();
+
+            foreach (var group in groups)
+            {
+                if (group.Value is Dictionary<object, object> sourceDict)
+                {
+                    if (@return.ContainsKey(group.Key))
+                    {
+                        if (@return[group.Key] is Dictionary<object, object> targetDict)
+                        {
+                            foreach (var key in sourceDict.Keys)
+                            {
+                                targetDict.Add(key, sourceDict[key]);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        @return.Add(group.Key, group.Value);
+                    }
+                }
+            }
+
+            return @return;
+        }
 
         private async Task<bool> TestIfRelevantAsync(object obj)
         {
