@@ -28,12 +28,12 @@ windows10:
     VirtualMachinePlatform:
       name: virtualmachine
   msi:
-    https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi:
+    https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi: # Autodownloaded from here.
       name: kernel
       dependencies:
         - wsl
         - virtualmachine
   appx:
-    https://aka.ms/wslubuntu2004:
+    https://aka.ms/wslubuntu2004: # Autodownloaded from here.
       dependencies:
         - kernel

@@ -14,10 +14,10 @@ all: # This names the block
   vscode:
     eamodio.gitlens:
         dependencies:
-            - vscode # Sets up a dependency on the named package
+          - vscode # Sets up a dependency on the named package
     VisualStudioExptTeam.vscodeintellicode:
         dependencies:
-            - vscode
+          - vscode
 
 windows:
   platform: windows
@@ -34,7 +34,19 @@ windows10:
   version: 10.0.18362 # Sets a particular version.
   feature:
     Microsoft-Windows-Subsystem-Linux:
+      name: wsl
     VirtualMachinePlatform:
+      name: virtualmachine
+  msi:
+    https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi: # Autodownloaded from here.
+      name: kernel
+      dependencies:
+        - wsl
+        - virtualmachine
+  appx:
+    https://aka.ms/wslubuntu2004: # Autodownloaded from here.
+      dependencies:
+        - kernel
 ```
 
 Then run `depend install` as in an admin command prompt.  Based on your platform/architecture/version, the above file will be transformed to install the relevant packages.
