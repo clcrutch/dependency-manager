@@ -16,6 +16,14 @@ namespace Clcrutch.Linq
                 yield return selector(enumerator.Current);
             }
         }
+        public static async IAsyncEnumerable<TResult> Select<TSource, TResult>(this IAsyncEnumerable<TSource> @this, Func<TSource, Task<TResult>> selector)
+        {
+            var enumerator = @this.GetAsyncEnumerator();
+            while (await enumerator.MoveNextAsync())
+            {
+                yield return await selector(enumerator.Current);
+            }
+        }
 
         public static async IAsyncEnumerable<TResult> SelectMany<TSource, TResult>(this IAsyncEnumerable<TSource> @this, Func<TSource, IEnumerable<TResult>> selector)
         {
@@ -35,7 +43,7 @@ namespace Clcrutch.Linq
             return list.ToArray();
         }
 
-        public static async Task<IList<T>> ToListAsync<T>(this IAsyncEnumerable<T> @this)
+        public static async Task<List<T>> ToListAsync<T>(this IAsyncEnumerable<T> @this)
         {
             var list = new List<T>();
 

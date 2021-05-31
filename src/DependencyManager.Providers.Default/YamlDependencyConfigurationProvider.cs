@@ -55,8 +55,13 @@ namespace DependencyManager.Providers.Default
                 var platform = dict["platform"] as string;
                 var arch = dict["architecture"] as string;
 
-                var platformProvider = platformProviders.Single(x => x.Name.Equals(platform, StringComparison.OrdinalIgnoreCase));
-                var archProvider = architectureProviders.Single(x => x.Name.Equals(arch, StringComparison.OrdinalIgnoreCase));
+                var platformProvider = platformProviders.SingleOrDefault(x => x.Name.Equals(platform, StringComparison.OrdinalIgnoreCase));
+                var archProvider = architectureProviders.SingleOrDefault(x => x.Name.Equals(arch, StringComparison.OrdinalIgnoreCase));
+
+                if (platformProvider == null || archProvider == null)
+                {
+                    return false;
+                }
 
                 if (dict.ContainsKey("version"))
                 {

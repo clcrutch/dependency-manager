@@ -1,4 +1,6 @@
-﻿using DependencyManager.Core;
+﻿using Clcrutch.Linq;
+using DependencyManager.Core;
+using DependencyManager.Core.Models;
 using DependencyManager.Core.Providers;
 using Microsoft.PowerShell;
 using System;
@@ -9,30 +11,24 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace DependencyManager.Providers.Windows
 {
-    public class ChocolateyInstallationProvider : ISoftwareInstallationProvider
+    public class ChocolateySoftwareProvider : ISoftwareProvider
     {
         private readonly IDependencyConfigurationProvider dependencyConfigurationProvider;
+        private readonly IOperatingSystemProvider operatingSystemProvider;
 
         public bool RequiresAdmin => true;
 
-        public ChocolateyInstallationProvider(IDependencyConfigurationProvider dependencyConfigurationProvider)
+        public ChocolateySoftwareProvider(
+            IDependencyConfigurationProvider dependencyConfigurationProvider,
+            IOperatingSystemProvider operatingSystemProvider)
         {
             this.dependencyConfigurationProvider = dependencyConfigurationProvider;
-        }
-
-        public async Task<bool> CanInstallAsync()
-        {
-            Dictionary<object, object> yaml = await dependencyConfigurationProvider.GetSoftwareConfigurationAsync();
-            if (!yaml.ContainsKey("chocolatey") || !OperatingSystem.IsWindows())
-            {
-                return false;
-            }
-
-            return yaml.ContainsKey("chocolatey");
+            this.operatingSystemProvider = operatingSystemProvider;
         }
 
         public async Task InitializeAsync()
@@ -59,14 +55,21 @@ namespace DependencyManager.Providers.Windows
                 .Split(';', StringSplitOptions.RemoveEmptyEntries)
                 .Any(p => File.Exists(Path.Combine(p, "choco.exe"))));
 
-        public async Task InstallPackagesAsync()
+        public async Task<IEnumerable<SoftwarePackage>> GetSoftwarePackagesAsync()
         {
-            var packagesToInstall = await GetPackagesToInstallAsync();
+            Dictionary<object, object> yaml = await dependencyConfigurationProvider.GetSoftwareConfigurationAsync();
+            var packages = yaml["chocolatey"] as Dictionary<object, object>;
 
+            return (from p in packages
+                    select new SoftwarePackage(p, this, operatingSystemProvider)).ToArray();
+        }
+
+        public async Task InstallPackageAsync(SoftwarePackage package)
+        {
             var process = Process.Start(new ProcessStartInfo
             {
                 FileName = "choco",
-                Arguments = $"install {string.Join(' ', packagesToInstall)} -y"
+                Arguments = $"install {package.PackageName} -y"
             });
 
             await process.WaitForExitAsync();
@@ -77,17 +80,14 @@ namespace DependencyManager.Providers.Windows
             }
         }
 
-        public async Task<bool> ShouldInstallPackagesAsync() =>
-            (await GetPackagesToInstallAsync()).Any();
-
-        private async Task<IEnumerable<string>> GetPackagesToInstallAsync()
+        public async Task<bool> TestPackageInstalledAsync(SoftwarePackage package)
         {
-            dynamic yaml = await dependencyConfigurationProvider.GetSoftwareConfigurationAsync();
-            var packages = await GetInstalledPackagesAsync();
-
-            Dictionary<object, object> chocoPackages = yaml["chocolatey"];
-            return chocoPackages.Keys.Select(x => x as string).Except(packages.Keys);
+            var installedPackages = await GetInstalledPackagesAsync();
+            return installedPackages.ContainsKey(package.PackageName);
         }
+
+        public Task<bool> TestPlatformAsync() =>
+            Task.FromResult(OperatingSystem.IsWindows());
 
         private async Task<Dictionary<string, string>> GetInstalledPackagesAsync()
         {
@@ -95,17 +95,22 @@ namespace DependencyManager.Providers.Windows
             {
                 FileName = "choco",
                 Arguments = "list --local-only",
-                RedirectStandardOutput = true
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
             });
 
             await process.WaitForExitAsync();
             var packageString = await process.StandardOutput.ReadToEndAsync();
-            var packageLines = packageString.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+            var packageLines = packageString.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
+
+            var index = packageLines.IndexOf((from l in packageLines
+                                              where Regex.Match(l, "[0-9]+ packages installed.").Success
+                                              select l).Single());
+
             var firstLine = packageLines.First();
             var lastLine = packageLines.Last();
 
-            return (from l in packageLines
-                    where l != firstLine && l != lastLine
+            return (from l in packageLines.Skip(1).Take(index - 1)
                     select l.Split(' ')).ToDictionary(s => s[0], s => s[1]);
         }
     }

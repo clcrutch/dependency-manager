@@ -13,8 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Clcrutch.Linq\Clcrutch.Linq.csproj" />
     <ProjectReference Include="..\DependencyManager.Core\DependencyManager.Core.csproj" />
     <ProjectReference Include="..\DependencyManager.Providers.Default\DependencyManager.Providers.Default.csproj" />
+    <ProjectReference Include="..\DependencyManager.Providers.VSCode\DependencyManager.Providers.VSCode.csproj" />
     <ProjectReference Include="..\DependencyManager.Providers.Windows\DependencyManager.Providers.Windows.csproj" />
   </ItemGroup>
 
