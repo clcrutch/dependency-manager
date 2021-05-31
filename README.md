@@ -8,9 +8,33 @@ Install the dotnet global tool. `dotnet tool install --global Clcrutch.Dependenc
 Create a file called `dependencies.yaml` with the below content
 
 ```yaml
+all: # This names the block
+  platform: all
+  architecture: all
+  vscode:
+    eamodio.gitlens:
+        dependencies:
+            - vscode # Sets up a dependency on the named package
+    VisualStudioExptTeam.vscodeintellicode:
+        dependencies:
+            - vscode
+
 windows:
+  platform: windows
+  architecture: all
   chocolatey:
+    visualstudio2019community:
+    visualstudio2019-workload-netcoretools:
     vscode:
+        name: vscode # Dependency of eamodio.gitlens and VisualStudioExptTeam.vscodeintellicode
+
+windows10:
+  platform: windows
+  architecture: amd64
+  version: 10.0.18362 # Sets a particular version.
+  feature:
+    Microsoft-Windows-Subsystem-Linux:
+    VirtualMachinePlatform:
 ```
 
-Then run `depend install` as in an admin command prompt.  This will install Visual Studio Code from Chocolatey.
+Then run `depend install` as in an admin command prompt.  Based on your platform/architecture/version, the above file will be transformed to install the relevant packages.
