@@ -4,10 +4,10 @@ all: # This names the block
   vscode:
     eamodio.gitlens:
         dependencies:
-            - vscode # Sets up a dependency on the named package
+          - vscode # Sets up a dependency on the named package
     VisualStudioExptTeam.vscodeintellicode:
         dependencies:
-            - vscode
+          - vscode
 
 windows:
   platform: windows
@@ -24,4 +24,11 @@ windows10:
   version: 10.0.18362 # Sets a particular version.
   feature:
     Microsoft-Windows-Subsystem-Linux:
+      name: wsl
     VirtualMachinePlatform:
+      name: virtualmachine
+  msi:
+    https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi:
+      dependencies:
+        - wsl
+        - virtualmachine

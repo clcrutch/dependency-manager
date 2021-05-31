@@ -92,7 +92,6 @@ namespace DependencyManager.Core.Models
     {
         public T Data { get; }
 
-
         public SoftwarePackage(
             KeyValuePair<object, object> yaml,
             T data,
