@@ -54,10 +54,20 @@ namespace DependencyManager.Providers.Windows
 
         public override async Task InstallPackageAsync(SoftwarePackage package)
         {
+            string arguments;
+            if (false && await GetUpgradePending(package.PackageName))
+            {
+                arguments = $"upgrade {package.PackageName} -y";
+            }
+            else
+            {
+                arguments = $"install {package.PackageName} -y";
+            }
+
             var process = Process.Start(new ProcessStartInfo
             {
                 FileName = "choco",
-                Arguments = $"install {package.PackageName} -y"
+                Arguments = arguments
             });
 
             await process.WaitForExitAsync();
@@ -71,7 +81,7 @@ namespace DependencyManager.Providers.Windows
         public override async Task<bool> TestPackageInstalledAsync(SoftwarePackage package)
         {
             var installedPackages = await GetInstalledPackagesAsync();
-            return installedPackages.ContainsKey(package.PackageName);
+            return installedPackages.ContainsKey(package.PackageName) && (true || !await GetUpgradePending(package.PackageName));
         }
 
         public override Task<bool> TestPlatformAsync() =>
@@ -95,12 +105,47 @@ namespace DependencyManager.Providers.Windows
                                               where Regex.Match(l, "[0-9]+ packages installed.").Success
                                               select l).Single());
 
-            var firstLine = packageLines.First();
-            var lastLine = packageLines.Last();
-
             return (from l in packageLines.Skip(1).Take(index - 1)
                     where !string.IsNullOrWhiteSpace(l)
                     select l.Trim().Split(' ')).ToDictionary(s => s[0], s => s[1]);
+        }
+
+        private async Task<string> GetLatestVersionAsync(string package)
+        {
+            var process = Process.Start(new ProcessStartInfo
+            {
+                FileName = "choco",
+                Arguments = $"list {package}",
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
+            });
+
+            await process.WaitForExitAsync();
+            var packageString = await process.StandardOutput.ReadToEndAsync();
+            var packageLines = packageString.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
+
+            var packages = from l in packageLines.Skip(1)
+                           where !string.IsNullOrWhiteSpace(l)
+                           select l.Trim().Split(' ');
+
+            var versionDict = (from p in packages
+                               where p.Count() >= 2
+                               select p).ToDictionary(s => s[0], s => s[1]);
+
+            return versionDict[package];
+        }
+
+        private async Task<bool> GetUpgradePending(string package)
+        {
+            var installedPackages = await GetInstalledPackagesAsync();
+
+            if (!installedPackages.ContainsKey(package))
+            {
+                return true;
+            }
+
+            var latestVersion = await GetLatestVersionAsync(package);
+            return installedPackages[package] != latestVersion;
         }
     }
 }

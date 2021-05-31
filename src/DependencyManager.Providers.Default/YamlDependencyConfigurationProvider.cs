@@ -28,8 +28,14 @@ namespace DependencyManager.Providers.Default
         public async Task<Dictionary<object, object>> GetSoftwareConfigurationAsync()
         {
             var yamlPath = Path.Combine(Environment.CurrentDirectory, "dependencies.yaml");
+            var yamlInfo = new FileInfo(yamlPath);
 
-            using var reader = File.OpenText(yamlPath);
+            if (!yamlInfo.Exists)
+            {
+                throw new FileNotFoundException("dependencies.yaml not found.");
+            }
+
+            using var reader = yamlInfo.OpenText();
             var deserializer = new DeserializerBuilder()
                 .Build();
 
