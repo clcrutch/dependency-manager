@@ -58,6 +58,8 @@ namespace DependencyManager.Lib
             var services = new ServiceCollection();
 
             services.AddTransient<IDependencyConfigurationProvider, YamlDependencyConfigurationProvider>();
+            services.AddTransient<IArchitectureProvider, Amd64ArchitectureProvider>();
+            services.AddTransient<IPlatformProvider, WindowsPlatformProvider>();
 
             if (OperatingSystem.IsWindows())
             {

@@ -26,14 +26,16 @@ namespace DependencyManager.Providers.Windows
 
         public async Task<bool> CanInstallAsync()
         {
-            Dictionary<object, object> yaml = await dependencyConfigurationProvider.GetSoftwareConfigurationAsync();
+            Dictionary<string, object> yaml = await dependencyConfigurationProvider.GetSoftwareConfigurationAsync();
             if (!yaml.ContainsKey("windows"))
             {
                 return false;
             }
 
-            Dictionary<object, object> windows = yaml["windows"] as Dictionary<object, object>;
-            return windows.ContainsKey("chocolatey");
+            throw new NotImplementedException();
+
+            //Dictionary<object, object> windows = yaml["windows"] as Dictionary<object, object>;
+            //return windows.ContainsKey("chocolatey");
         }
 
         public async Task InitializeAsync()

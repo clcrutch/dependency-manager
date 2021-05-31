@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace DependencyManager.Core.Providers
 {
-    public interface IDependencyConfigurationProvider
+    public interface IArchitectureProvider
     {
-        Task<Dictionary<string, object>> GetSoftwareConfigurationAsync();
+        string Name { get; }
+
+        Task<bool> TestAsync();
     }
 }

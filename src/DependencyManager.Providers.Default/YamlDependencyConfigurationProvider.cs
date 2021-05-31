@@ -15,7 +15,16 @@ namespace DependencyManager.Providers.Default
 {
     public class YamlDependencyConfigurationProvider : IDependencyConfigurationProvider
     {
-        public async Task<Dictionary<object, object>> GetSoftwareConfigurationAsync()
+        private readonly IEnumerable<IPlatformProvider> platformProviders;
+        private readonly IEnumerable<IArchitectureProvider> architectureProviders;
+
+        public YamlDependencyConfigurationProvider(IEnumerable<IPlatformProvider> platformProviders, IEnumerable<IArchitectureProvider> architectureProviders)
+        {
+            this.platformProviders = platformProviders;
+            this.architectureProviders = architectureProviders;
+        }
+
+        public async Task<Dictionary<string, object>> GetSoftwareConfigurationAsync()
         {
             var yamlPath = Path.Combine(Environment.CurrentDirectory, "dependencies.yaml");
 
@@ -23,7 +32,28 @@ namespace DependencyManager.Providers.Default
             var deserializer = new DeserializerBuilder()
                 .Build();
 
-            return deserializer.Deserialize<dynamic>(await reader.ReadToEndAsync());
+            Dictionary<object, object> sections = deserializer.Deserialize<dynamic>(await reader.ReadToEndAsync());
+            var relevantSections = (from s in sections
+                                    where TestIfRelevantAsync(s.Value)
+                                    select s).ToArray();
+
+            throw new NotImplementedException();
+        }
+
+        private async Task<bool> TestIfRelevantAsync(object obj)
+        {
+            if (obj is Dictionary<object, object> dict)
+            {
+                var platform = dict["platform"] as string;
+                var arch = dict["architecture"] as string;
+
+                var platformProvider = platformProviders.Single(x => x.Name.Equals(platform, StringComparison.OrdinalIgnoreCase));
+                var archProvider = architectureProviders.Single(x => x.Name.Equals(arch, StringComparison.OrdinalIgnoreCase));
+
+                return (await Task.WhenAll(platformProvider.TestAsync(), archProvider.TestAsync())).All(x => x);
+            }
+
+            throw new NotImplementedException();
         }
     }
 }
