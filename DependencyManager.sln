@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyManager.Lib", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyManager.Providers.Windows", "src\DependencyManager.Providers.Windows\DependencyManager.Providers.Windows.csproj", "{388AE2A9-AD9A-4C39-839F-7629636555EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clcrutch.Linq", "Clcrutch.Linq\Clcrutch.Linq.csproj", "{81F829DE-1AEF-4E5B-B53A-6EB0C95E8B24}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clcrutch.Linq", "src\Clcrutch.Linq\Clcrutch.Linq.csproj", "{66375BF5-92D4-48A7-8742-248DE0DFF9D5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,10 +41,10 @@ Global
 		{388AE2A9-AD9A-4C39-839F-7629636555EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{388AE2A9-AD9A-4C39-839F-7629636555EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{388AE2A9-AD9A-4C39-839F-7629636555EB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{81F829DE-1AEF-4E5B-B53A-6EB0C95E8B24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{81F829DE-1AEF-4E5B-B53A-6EB0C95E8B24}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{81F829DE-1AEF-4E5B-B53A-6EB0C95E8B24}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{81F829DE-1AEF-4E5B-B53A-6EB0C95E8B24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66375BF5-92D4-48A7-8742-248DE0DFF9D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66375BF5-92D4-48A7-8742-248DE0DFF9D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66375BF5-92D4-48A7-8742-248DE0DFF9D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66375BF5-92D4-48A7-8742-248DE0DFF9D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

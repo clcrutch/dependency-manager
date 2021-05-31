@@ -8,6 +8,6 @@ namespace DependencyManager.Core.Providers
 {
     public interface IDependencyConfigurationProvider
     {
-        Task<Dictionary<string, object>> GetSoftwareConfigurationAsync();
+        Task<Dictionary<object, object>> GetSoftwareConfigurationAsync();
     }
 }

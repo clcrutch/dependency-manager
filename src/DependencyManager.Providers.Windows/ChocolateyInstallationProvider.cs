@@ -26,16 +26,13 @@ namespace DependencyManager.Providers.Windows
 
         public async Task<bool> CanInstallAsync()
         {
-            Dictionary<string, object> yaml = await dependencyConfigurationProvider.GetSoftwareConfigurationAsync();
-            if (!yaml.ContainsKey("windows"))
+            Dictionary<object, object> yaml = await dependencyConfigurationProvider.GetSoftwareConfigurationAsync();
+            if (!yaml.ContainsKey("chocolatey") || !OperatingSystem.IsWindows())
             {
                 return false;
             }
 
-            throw new NotImplementedException();
-
-            //Dictionary<object, object> windows = yaml["windows"] as Dictionary<object, object>;
-            //return windows.ContainsKey("chocolatey");
+            return yaml.ContainsKey("chocolatey");
         }
 
         public async Task InitializeAsync()
@@ -88,8 +85,7 @@ namespace DependencyManager.Providers.Windows
             dynamic yaml = await dependencyConfigurationProvider.GetSoftwareConfigurationAsync();
             var packages = await GetInstalledPackagesAsync();
 
-            Dictionary<object, object> chocoPackages = yaml["windows"]["chocolatey"];
-
+            Dictionary<object, object> chocoPackages = yaml["chocolatey"];
             return chocoPackages.Keys.Select(x => x as string).Except(packages.Keys);
         }
 

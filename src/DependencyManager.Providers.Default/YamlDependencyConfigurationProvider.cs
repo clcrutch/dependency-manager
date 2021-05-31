@@ -1,4 +1,5 @@
-﻿using DependencyManager.Core.Providers;
+﻿using Clcrutch.Linq;
+using DependencyManager.Core.Providers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace DependencyManager.Providers.Default
             this.architectureProviders = architectureProviders;
         }
 
-        public async Task<Dictionary<string, object>> GetSoftwareConfigurationAsync()
+        public async Task<Dictionary<object, object>> GetSoftwareConfigurationAsync()
         {
             var yamlPath = Path.Combine(Environment.CurrentDirectory, "dependencies.yaml");
 
@@ -33,12 +34,19 @@ namespace DependencyManager.Providers.Default
                 .Build();
 
             Dictionary<object, object> sections = deserializer.Deserialize<dynamic>(await reader.ReadToEndAsync());
-            var relevantSections = (from s in sections
-                                    where TestIfRelevantAsync(s.Value)
-                                    select s).ToArray();
+            var relevantSections = await sections
+                                    .Where(s => TestIfRelevantAsync(s.Value))
+                                    .Select(s => s.Value as IEnumerable<KeyValuePair<object, object>>)
+                                    .SelectMany(s => s)
+                                    .ToArrayAsync();
 
-            throw new NotImplementedException();
+            return Combine(relevantSections);
         }
+
+        private Dictionary<object, object> Combine(IEnumerable<KeyValuePair<object, object>> groups) =>
+            (from g in groups
+             where g.Key.ToString() != "platform" && g.Key.ToString() != "architecture"
+             select g).ToDictionary(x => x.Key as object, x => x.Value);
 
         private async Task<bool> TestIfRelevantAsync(object obj)
         {
@@ -53,7 +61,7 @@ namespace DependencyManager.Providers.Default
                 return (await Task.WhenAll(platformProvider.TestAsync(), archProvider.TestAsync())).All(x => x);
             }
 
-            throw new NotImplementedException();
+            return false;
         }
     }
 }
