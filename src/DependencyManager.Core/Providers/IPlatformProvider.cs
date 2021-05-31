@@ -11,5 +11,6 @@ namespace DependencyManager.Core.Providers
         string Name { get; }
 
         Task<bool> TestAsync();
+        Task<bool> TestAsync(string version);
     }
 }

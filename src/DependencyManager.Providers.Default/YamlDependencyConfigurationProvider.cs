@@ -58,7 +58,16 @@ namespace DependencyManager.Providers.Default
                 var platformProvider = platformProviders.Single(x => x.Name.Equals(platform, StringComparison.OrdinalIgnoreCase));
                 var archProvider = architectureProviders.Single(x => x.Name.Equals(arch, StringComparison.OrdinalIgnoreCase));
 
-                return (await Task.WhenAll(platformProvider.TestAsync(), archProvider.TestAsync())).All(x => x);
+                if (dict.ContainsKey("version"))
+                {
+                    var version = dict["version"] as string;
+
+                    return (await Task.WhenAll(platformProvider.TestAsync(version), archProvider.TestAsync())).All(x => x);
+                }
+                else
+                {
+                    return (await Task.WhenAll(platformProvider.TestAsync(), archProvider.TestAsync())).All(x => x);
+                }
             }
 
             return false;
