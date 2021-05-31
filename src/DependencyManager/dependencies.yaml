@@ -29,6 +29,11 @@ windows10:
       name: virtualmachine
   msi:
     https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi:
+      name: kernel
       dependencies:
         - wsl
         - virtualmachine
+  appx:
+    https://aka.ms/wslubuntu2004:
+      dependencies:
+        - kernel

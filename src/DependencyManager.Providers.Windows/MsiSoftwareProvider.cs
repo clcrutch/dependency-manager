@@ -14,12 +14,10 @@ using System.Threading.Tasks;
 
 namespace DependencyManager.Providers.Windows
 {
-    public class MsiSoftwareProvider : SoftwareProviderBase
+    public class MsiSoftwareProvider : FileSoftwareProviderBase
     {
         public override bool InstallRequiresAdmin => true;
-
         public override bool TestRequiresAdmin => false;
-
         protected override string SectionName => "msi";
 
         public MsiSoftwareProvider(
@@ -39,7 +37,7 @@ namespace DependencyManager.Providers.Windows
 
         public override async Task InstallPackageAsync(SoftwarePackage package)
         {
-            var fileinfo = await GetMsiFileAsync(package);
+            var fileinfo = await GetPackageFileAsync(package, ".msi");
 
             var process = Process.Start(new ProcessStartInfo
             {
@@ -57,7 +55,7 @@ namespace DependencyManager.Providers.Windows
 
         public override async Task<bool> TestPackageInstalledAsync(SoftwarePackage package)
         {
-            var fileinfo = await GetMsiFileAsync(package);
+            var fileinfo = await GetPackageFileAsync(package, ".msi");
             var productName = GetProductName(fileinfo.FullName);
 
             if (OperatingSystem.IsWindows())
@@ -74,30 +72,6 @@ namespace DependencyManager.Providers.Windows
 
         public override Task<bool> TestPlatformAsync() =>
             Task.FromResult(OperatingSystem.IsWindows());
-
-        private async Task<FileInfo> GetMsiFileAsync(SoftwarePackage package)
-        {
-            var cachePath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Clcrutch", "DependencyManager", "cache");
-            var cacheDirectoryInfo = new DirectoryInfo(cachePath);
-
-            if (!cacheDirectoryInfo.Exists)
-            {
-                cacheDirectoryInfo.Create();
-            }
-
-            var filename = Path.GetFileName(new Uri(package.PackageName).LocalPath);
-            var filepath = Path.Join(cachePath, filename);
-
-            var fileinfo = new FileInfo(filepath);
-
-            if (!fileinfo.Exists)
-            {
-                using var client = new WebClient();
-                await client.DownloadFileTaskAsync(package.PackageName, fileinfo.FullName);
-            }
-
-            return fileinfo;
-        }
 
         [DllImport("msi.dll", CharSet = CharSet.Unicode, PreserveSig = true, SetLastError = true, ExactSpelling = true)]
         private static extern UInt32 MsiOpenPackageW(string szPackagePath, out IntPtr hProduct);
@@ -128,11 +102,11 @@ namespace DependencyManager.Providers.Windows
                 }
             }
         }
-        public static string GetProductCode(string msi)
+        private static string GetProductCode(string msi)
         {
             return GetPackageProperty(msi, "ProductCode");
         }
-        public static string GetProductName(string msi)
+        private static string GetProductName(string msi)
         {
             return GetPackageProperty(msi, "ProductName");
         }

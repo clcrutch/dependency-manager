@@ -16,9 +16,7 @@ namespace DependencyManager.Providers.Windows
         private DismSession session;
 
         public override bool InstallRequiresAdmin => true;
-
         public override bool TestRequiresAdmin => true;
-
         protected override string SectionName => "feature";
 
         public WindowsFeatureSoftwareProvider(

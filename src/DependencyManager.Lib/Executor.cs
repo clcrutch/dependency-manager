@@ -42,6 +42,7 @@ namespace DependencyManager.Lib
                 services.AddTransient<ISoftwareProvider, ChocolateySoftwareProvider>();
                 services.AddTransient<ISoftwareProvider, WindowsFeatureSoftwareProvider>();
                 services.AddTransient<ISoftwareProvider, MsiSoftwareProvider>();
+                services.AddTransient<ISoftwareProvider, AppxSoftwareProvider>();
                 services.AddTransient<IOperatingSystemProvider, WindowsOperatingSystemProvider>();
             }
 
