@@ -65,12 +65,6 @@ namespace DependencyManager.Core.Models
         public virtual async Task<bool> TestInstalledAsync()
         {
             await InitializeAsync();
-
-            if (provider.TestRequiresAdmin && !await operatingSystem.IsUserAdminAsync())
-            {
-                throw new AdministratorRequiredException();
-            }
-
             return await provider.TestPackageInstalledAsync(this);
         }
 

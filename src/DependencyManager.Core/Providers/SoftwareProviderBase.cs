@@ -13,8 +13,6 @@ namespace DependencyManager.Core.Providers
         protected readonly IOperatingSystemProvider operatingSystemProvider;
 
         public abstract bool InstallRequiresAdmin { get; }
-        public abstract bool TestRequiresAdmin { get; }
-
         protected abstract string SectionName { get; }
 
         protected SoftwareProviderBase(

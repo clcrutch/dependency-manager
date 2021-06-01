@@ -1,9 +1,12 @@
-﻿using DependencyManager.Core.Models;
+﻿using DependencyManager.Core;
+using DependencyManager.Core.Models;
 using DependencyManager.Core.Providers;
 using Microsoft.Dism;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,7 +19,6 @@ namespace DependencyManager.Providers.Windows
         private DismSession session;
 
         public override bool InstallRequiresAdmin => true;
-        public override bool TestRequiresAdmin => true;
         protected override string SectionName => "feature";
 
         public WindowsFeatureSoftwareProvider(
@@ -55,11 +57,27 @@ namespace DependencyManager.Providers.Windows
         public override Task InstallPackageAsync(SoftwarePackage package)
         {
             DismApi.EnableFeatureByPackageName(GetDismSession(), package.PackageName, null, false, true);
-            return Task.FromResult(0);
+            return UpdateCacheAsync(GetCurrentFeatures());
         }
 
-        public override Task<bool> TestPackageInstalledAsync(SoftwarePackage package) =>
-            Task.FromResult(DismApi.GetFeatureInfo(GetDismSession(), package.PackageName).FeatureState == DismPackageFeatureState.Installed);
+        public override async Task<bool> TestPackageInstalledAsync(SoftwarePackage package)
+        {
+            var cachedFeatures = await GetCachedFeaturesAsync();
+
+            if (cachedFeatures != null && cachedFeatures[package.PackageName] == DismPackageFeatureState.Installed)
+            {
+                return true;
+            }
+
+            if (!await operatingSystemProvider.IsUserAdminAsync())
+            {
+                throw new AdministratorRequiredException();
+            }
+
+            var features = GetCurrentFeatures();
+
+            return features[package.PackageName] == DismPackageFeatureState.Installed;
+        }
 
         public override Task<bool> TestPlatformAsync() =>
             Task.FromResult(OperatingSystem.IsWindowsVersionAtLeast(6, 1)); // At least Windows 7.
@@ -82,6 +100,49 @@ namespace DependencyManager.Providers.Windows
             }
 
             return session;
+        }
+
+        private FileInfo GetCacheInfo()
+        {
+            var cachePath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Clcrutch", "DependencyManager", "cache");
+            var cacheDirectoryInfo = new DirectoryInfo(cachePath);
+
+            if (!cacheDirectoryInfo.Exists)
+            {
+                cacheDirectoryInfo.Create();
+            }
+
+            var installedPackagesCachePath = Path.Combine(cachePath, "WindowsFeatureState.json");
+            return new FileInfo(installedPackagesCachePath);
+        }
+
+        private Dictionary<string, DismPackageFeatureState> GetCurrentFeatures() =>
+            DismApi.GetFeatures(GetDismSession()).ToDictionary(x => x.FeatureName, x => x.State);
+
+        private async Task<Dictionary<string, DismPackageFeatureState>> GetCachedFeaturesAsync()
+        {
+            var cacheInfo = GetCacheInfo();
+
+            if (!cacheInfo.Exists)
+            {
+                return null;
+            }
+
+            using var reader = cacheInfo.OpenText();
+            return JsonConvert.DeserializeObject<Dictionary<string, DismPackageFeatureState>>(await reader.ReadToEndAsync());
+        }
+
+        private Task UpdateCacheAsync(Dictionary<string, DismPackageFeatureState> features)
+        {
+            var cacheInfo = GetCacheInfo();
+
+            if (cacheInfo.Exists)
+            {
+                cacheInfo.Delete();
+            }
+
+            using var writer = cacheInfo.CreateText();
+            return writer.WriteAsync(JsonConvert.SerializeObject(features));
         }
     }
 }

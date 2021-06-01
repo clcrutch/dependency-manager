@@ -17,7 +17,6 @@ namespace DependencyManager.Providers.Windows
     public class MsiSoftwareProvider : FileSoftwareProviderBase
     {
         public override bool InstallRequiresAdmin => true;
-        public override bool TestRequiresAdmin => false;
         protected override string SectionName => "msi";
 
         public MsiSoftwareProvider(

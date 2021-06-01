@@ -18,7 +18,6 @@ namespace DependencyManager.Providers.Windows
     public class AppxSoftwareProvider : FileSoftwareProviderBase
     {
         public override bool InstallRequiresAdmin => false;
-        public override bool TestRequiresAdmin => false;
         protected override string SectionName => "appx";
 
         public AppxSoftwareProvider(
