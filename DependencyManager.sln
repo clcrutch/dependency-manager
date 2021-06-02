@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clcrutch.Linq", "src\Clcrut
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyManager.Providers.VSCode", "src\DependencyManager.Providers.VSCode\DependencyManager.Providers.VSCode.csproj", "{620C9B5E-B4A4-45D8-977C-7566C953954C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyManager.Providers.Linux", "src\DependencyManager.Providers.Linux\DependencyManager.Providers.Linux.csproj", "{F673CB4E-F892-4EDE-8E98-01B99C2B98CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{620C9B5E-B4A4-45D8-977C-7566C953954C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{620C9B5E-B4A4-45D8-977C-7566C953954C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{620C9B5E-B4A4-45D8-977C-7566C953954C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F673CB4E-F892-4EDE-8E98-01B99C2B98CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F673CB4E-F892-4EDE-8E98-01B99C2B98CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F673CB4E-F892-4EDE-8E98-01B99C2B98CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F673CB4E-F892-4EDE-8E98-01B99C2B98CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

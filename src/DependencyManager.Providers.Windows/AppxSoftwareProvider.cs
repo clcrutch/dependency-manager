@@ -17,7 +17,7 @@ namespace DependencyManager.Providers.Windows
 {
     public class AppxSoftwareProvider : FileSoftwareProviderBase
     {
-        public override bool InstallRequiresAdmin => false;
+        public override PermissionRequirements RequiredPermissions => PermissionRequirements.None;
         protected override string SectionName => "appx";
 
         public AppxSoftwareProvider(

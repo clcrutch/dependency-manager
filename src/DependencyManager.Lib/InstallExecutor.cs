@@ -10,14 +10,12 @@ using DependencyManager.Core.Models;
 
 namespace DependencyManager.Lib
 {
-    class InstallExecutor
+    internal class InstallExecutor
     {
-        private readonly IOperatingSystemProvider operatingSystem;
         private readonly IEnumerable<ISoftwareProvider> softwareInstallationProviders;
 
-        public InstallExecutor(IOperatingSystemProvider operatingSystem, IEnumerable<ISoftwareProvider> softwareInstallationProviders)
+        public InstallExecutor(IEnumerable<ISoftwareProvider> softwareInstallationProviders)
         {
-            this.operatingSystem = operatingSystem;
             this.softwareInstallationProviders = softwareInstallationProviders;
         }
 
@@ -43,9 +41,9 @@ namespace DependencyManager.Lib
         {
             if (package.Dependencies?.Any() ?? false)
             {
-                var missingDependencies = from d in package.Dependencies
-                                          where !packagesByName.ContainsKey(d)
-                                          select d;
+                var missingDependencies = (from d in package.Dependencies
+                    where !packagesByName.ContainsKey(d)
+                    select d).ToArray();
 
                 if (missingDependencies.Any())
                 {

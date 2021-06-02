@@ -12,7 +12,7 @@ namespace DependencyManager.Core.Providers
         protected readonly IDependencyConfigurationProvider dependencyConfigurationProvider;
         protected readonly IOperatingSystemProvider operatingSystemProvider;
 
-        public abstract bool InstallRequiresAdmin { get; }
+        public abstract PermissionRequirements RequiredPermissions { get; }
         protected abstract string SectionName { get; }
 
         protected SoftwareProviderBase(

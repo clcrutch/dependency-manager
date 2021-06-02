@@ -18,7 +18,7 @@ namespace DependencyManager.Providers.Windows
         private bool disposed = false;
         private DismSession session;
 
-        public override bool InstallRequiresAdmin => true;
+        public override PermissionRequirements RequiredPermissions => PermissionRequirements.SuperUser;
         protected override string SectionName => "feature";
 
         public WindowsFeatureSoftwareProvider(
@@ -71,7 +71,7 @@ namespace DependencyManager.Providers.Windows
 
             if (!await operatingSystemProvider.IsUserAdminAsync())
             {
-                throw new AdministratorRequiredException();
+                throw new SuperUserRequiredException();
             }
 
             var features = GetCurrentFeatures();

@@ -18,7 +18,7 @@ namespace DependencyManager.Providers.Windows
 {
     public class ChocolateySoftwareProvider : SoftwareProviderBase
     {
-        public override bool InstallRequiresAdmin => true;
+        public override PermissionRequirements RequiredPermissions => PermissionRequirements.SuperUser;
         protected override string SectionName => "chocolatey";
 
         public ChocolateySoftwareProvider(

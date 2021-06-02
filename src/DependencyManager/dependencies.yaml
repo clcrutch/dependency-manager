@@ -1,7 +1,7 @@
 all: # This names the block
   platform: all
   architecture: all
-  vscode:
+  vscode: # Note that VSCode cannot be run as super user.
     eamodio.gitlens:
         dependencies:
           - vscode # Sets up a dependency on the named package
@@ -37,3 +37,11 @@ windows10:
     https://aka.ms/wslubuntu2004: # Autodownloaded from here.
       dependencies:
         - kernel
+          
+linux:
+  platform: linux
+  architecture: amd64
+  snap:
+    code:
+      name: vscode
+    rider:

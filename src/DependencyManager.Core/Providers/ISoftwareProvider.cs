@@ -7,9 +7,16 @@ using System.Threading.Tasks;
 
 namespace DependencyManager.Core.Providers
 {
+    public enum PermissionRequirements
+    {
+        None,
+        User,
+        SuperUser
+    }
+    
     public interface ISoftwareProvider
     {
-        bool InstallRequiresAdmin { get; }
+        PermissionRequirements RequiredPermissions { get; }
 
         Task InitializeAsync();
         Task<bool> InitializationPendingAsync();

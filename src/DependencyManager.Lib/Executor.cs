@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using DependencyManager.Providers.Linux;
 
 namespace DependencyManager.Lib
 {
@@ -21,7 +22,7 @@ namespace DependencyManager.Lib
         }
 
         public Task InstallAsync() =>
-            services.GetService<InstallExecutor>().InstallAsync();
+            services.GetService<InstallExecutor>()?.InstallAsync();
 
         private IServiceProvider ConfigureServices()
         {
@@ -34,6 +35,7 @@ namespace DependencyManager.Lib
 
             services.AddTransient<IPlatformProvider, AllPlatformProvider>();
             services.AddTransient<IPlatformProvider, WindowsPlatformProvider>();
+            services.AddTransient<IPlatformProvider, LinuxPlatformProvider>();
 
             services.AddTransient<InstallExecutor>();
 
@@ -44,6 +46,11 @@ namespace DependencyManager.Lib
                 services.AddTransient<ISoftwareProvider, MsiSoftwareProvider>();
                 services.AddTransient<ISoftwareProvider, AppxSoftwareProvider>();
                 services.AddTransient<IOperatingSystemProvider, WindowsOperatingSystemProvider>();
+            }
+            else if (OperatingSystem.IsLinux())
+            {
+                services.AddTransient<ISoftwareProvider, SnapSoftwareProvider>();
+                services.AddTransient<IOperatingSystemProvider, LinuxOperatingSystemProvider>();
             }
 
             services.AddTransient<ISoftwareProvider, VSCodeSoftwareProvider>();

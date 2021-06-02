@@ -59,7 +59,14 @@ namespace DependencyManager.Core.Models
         public virtual async Task InstallAsync()
         {
             await InitializeAsync();
-            await provider.InstallPackageAsync(this);
+
+            var isUserAdmin = await operatingSystem.IsUserAdminAsync();
+            if (provider.RequiredPermissions == PermissionRequirements.SuperUser && !isUserAdmin)
+                throw new SuperUserRequiredException();
+            else if (provider.RequiredPermissions == PermissionRequirements.User && isUserAdmin)
+                throw new UserRequiredException();
+            else
+                await provider.InstallPackageAsync(this);
         }
 
         public virtual async Task<bool> TestInstalledAsync()
@@ -72,12 +79,13 @@ namespace DependencyManager.Core.Models
         {
             if (await provider.InitializationPendingAsync())
             {
-                if (provider.InstallRequiresAdmin && !await operatingSystem.IsUserAdminAsync())
-                {
-                    throw new AdministratorRequiredException();
-                }
-
-                await provider.InitializeAsync();
+                var isUserAdmin = await operatingSystem.IsUserAdminAsync();
+                if (provider.RequiredPermissions == PermissionRequirements.SuperUser && !isUserAdmin)
+                    throw new SuperUserRequiredException();
+                else if (provider.RequiredPermissions == PermissionRequirements.User && isUserAdmin)
+                    throw new UserRequiredException();
+                else
+                    await provider.InitializeAsync();
             }
         }
     }
