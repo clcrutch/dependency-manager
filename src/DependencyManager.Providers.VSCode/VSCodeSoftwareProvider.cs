@@ -11,7 +11,7 @@ namespace DependencyManager.Providers.VSCode
 {
     public class VSCodeSoftwareProvider : SoftwareProviderBase
     {
-        public override PermissionRequirements RequiredPermissions => PermissionRequirements.User;
+        public override PermissionRequirements RequiredPermissions => PermissionRequirements.None;
         protected override string SectionName => "vscode";
 
         public VSCodeSoftwareProvider(
