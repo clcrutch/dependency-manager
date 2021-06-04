@@ -26,7 +26,7 @@ namespace DependencyManager.Core.Providers
         public virtual async Task<IEnumerable<SoftwarePackage>> GetSoftwarePackagesAsync()
         {
             var yaml = await dependencyConfigurationProvider.GetSoftwareConfigurationAsync();
-            if (yaml.ContainsKey(SectionName))
+            if (!yaml.ContainsKey(SectionName))
             {
                 return null;
             }
