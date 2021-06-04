@@ -25,7 +25,12 @@ namespace DependencyManager.Core.Providers
 
         public virtual async Task<IEnumerable<SoftwarePackage>> GetSoftwarePackagesAsync()
         {
-            Dictionary<object, object> yaml = await dependencyConfigurationProvider.GetSoftwareConfigurationAsync();
+            var yaml = await dependencyConfigurationProvider.GetSoftwareConfigurationAsync();
+            if (yaml.ContainsKey(SectionName))
+            {
+                return null;
+            }
+
             var packages = yaml[SectionName] as Dictionary<object, object>;
 
             return (from p in packages
