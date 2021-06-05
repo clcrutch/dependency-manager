@@ -60,7 +60,7 @@ namespace DependencyManager.Core.Models
         {
             await InitializeAsync();
 
-            var isUserAdmin = await operatingSystem.IsUserAdminAsync();
+            var isUserAdmin = await operatingSystem.IsSuperUserAsync();
             if (provider.RequiredPermissions == PermissionRequirements.SuperUser && !isUserAdmin)
                 throw new SuperUserRequiredException();
             else if (provider.RequiredPermissions == PermissionRequirements.User && isUserAdmin)
@@ -79,7 +79,7 @@ namespace DependencyManager.Core.Models
         {
             if (await provider.InitializationPendingAsync())
             {
-                var isUserAdmin = await operatingSystem.IsUserAdminAsync();
+                var isUserAdmin = await operatingSystem.IsSuperUserAsync();
                 if (provider.RequiredPermissions == PermissionRequirements.SuperUser && !isUserAdmin)
                     throw new SuperUserRequiredException();
                 else if (provider.RequiredPermissions == PermissionRequirements.User && isUserAdmin)

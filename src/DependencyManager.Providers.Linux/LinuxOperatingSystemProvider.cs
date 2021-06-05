@@ -27,7 +27,7 @@ namespace DependencyManager.Providers.Linux
             return whichString.Split('\n', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
         }
 
-        public Task<bool> IsUserAdminAsync() =>
+        public Task<bool> IsSuperUserAsync() =>
             Task.FromResult(getuid() == 0);
     }
 }

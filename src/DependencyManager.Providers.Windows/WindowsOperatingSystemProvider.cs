@@ -47,7 +47,7 @@ namespace DependencyManager.Providers.Windows
             }
         }
 
-        public Task<bool> IsUserAdminAsync()
+        public Task<bool> IsSuperUserAsync()
         {
             if (OperatingSystem.IsWindows())
             {

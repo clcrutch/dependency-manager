@@ -69,7 +69,7 @@ namespace DependencyManager.Providers.Windows
                 return true;
             }
 
-            if (!await operatingSystemProvider.IsUserAdminAsync())
+            if (!await operatingSystemProvider.IsSuperUserAsync())
             {
                 throw new SuperUserRequiredException();
             }
