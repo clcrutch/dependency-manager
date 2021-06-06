@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace DependencyManager
 {
+    [VersionOption("--version")]
     [Subcommand(typeof(InstallCommand))]
     class Program
     {

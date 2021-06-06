@@ -24,6 +24,7 @@ namespace DependencyManager.Lib
             var softwarePackages = await softwareInstallationProviders
                                     .Where(s => s.TestPlatformAsync())
                                     .Select(s => s.GetSoftwarePackagesAsync())
+                                    .Where(s => s != null)
                                     .SelectMany(s => s)
                                     .ToListAsync();
 
