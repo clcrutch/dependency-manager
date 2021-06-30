@@ -129,10 +129,17 @@ namespace DependencyManager.Providers.Windows
             }
 
             using var reader = cacheInfo.OpenText();
-            return JsonConvert.DeserializeObject<Dictionary<string, DismPackageFeatureState>>(await reader.ReadToEndAsync());
+            try
+            {
+                return JsonConvert.DeserializeObject<Dictionary<string, DismPackageFeatureState>>(await reader.ReadToEndAsync());
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
-        private Task UpdateCacheAsync(Dictionary<string, DismPackageFeatureState> features)
+        private async Task UpdateCacheAsync(Dictionary<string, DismPackageFeatureState> features)
         {
             var cacheInfo = GetCacheInfo();
 
@@ -142,7 +149,7 @@ namespace DependencyManager.Providers.Windows
             }
 
             using var writer = cacheInfo.CreateText();
-            return writer.WriteAsync(JsonConvert.SerializeObject(features));
+            await writer.WriteAsync(JsonConvert.SerializeObject(features));
         }
     }
 }
