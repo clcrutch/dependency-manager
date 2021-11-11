@@ -31,6 +31,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x' # SDK Version to use; x will use the latest version of the 6.0 channel
+
       # Runs a single command using the runners shell
       - name: Cake Build
-        uses: cake-build/cake-action@v1.3.0
+        uses: cake-build/cake-action@v1.4.0
