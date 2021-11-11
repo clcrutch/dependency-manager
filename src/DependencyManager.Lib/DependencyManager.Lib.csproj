@@ -17,6 +17,7 @@
     <ProjectReference Include="..\DependencyManager.Core\DependencyManager.Core.csproj" />
     <ProjectReference Include="..\DependencyManager.Providers.Default\DependencyManager.Providers.Default.csproj" />
     <ProjectReference Include="..\DependencyManager.Providers.Linux\DependencyManager.Providers.Linux.csproj" />
+    <ProjectReference Include="..\DependencyManager.Providers.Npm\DependencyManager.Providers.Npm.csproj" />
     <ProjectReference Include="..\DependencyManager.Providers.VSCode\DependencyManager.Providers.VSCode.csproj" />
     <ProjectReference Include="..\DependencyManager.Providers.Windows\DependencyManager.Providers.Windows.csproj" />
   </ItemGroup>

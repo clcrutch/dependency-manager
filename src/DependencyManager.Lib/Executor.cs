@@ -9,6 +9,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using DependencyManager.Providers.Linux;
+using DependencyManager.Providers.Npm;
 
 namespace DependencyManager.Lib
 {
@@ -53,6 +54,7 @@ namespace DependencyManager.Lib
                 services.AddTransient<IOperatingSystemProvider, LinuxOperatingSystemProvider>();
             }
 
+            services.AddTransient<ISoftwareProvider, NpmSoftwareProvider>();
             services.AddTransient<ISoftwareProvider, VSCodeSoftwareProvider>();
 
             return services.BuildServiceProvider();
