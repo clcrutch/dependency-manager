@@ -11,6 +11,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Net;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -30,8 +31,8 @@ namespace DependencyManager.Providers.Windows
 
         public override async Task InitializeAsync()
         {
-            using var client = new WebClient();
-            var script = await client.DownloadStringTaskAsync("https://chocolatey.org/install.ps1");
+            using var client = new HttpClient();
+            var script = await client.GetStringAsync("https://chocolatey.org/install.ps1");
 
             var initialSessionState = InitialSessionState.CreateDefault();
             initialSessionState.ExecutionPolicy = ExecutionPolicy.Unrestricted;

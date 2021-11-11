@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -41,8 +42,11 @@ namespace DependencyManager.Core.Providers
 
                 if (!fileinfo.Exists)
                 {
-                    using var client = new WebClient();
-                    await client.DownloadFileTaskAsync(package.PackageName, fileinfo.FullName);
+                    using var client = new HttpClient();
+                    var webStream = await client.GetStreamAsync(package.PackageName);
+                    var fileStream = fileinfo.Create();
+
+                    await webStream.CopyToAsync(fileStream);
                 }
 
                 return fileinfo;
