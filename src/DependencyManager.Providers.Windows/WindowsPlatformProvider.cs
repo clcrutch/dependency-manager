@@ -1,7 +1,9 @@
 ﻿using DependencyManager.Core.Providers;
+using System.Composition;
 
 namespace DependencyManager.Providers.Windows
 {
+    [Export(typeof(IPlatformProvider))]
     public class WindowsPlatformProvider : IPlatformProvider
     {
         public string Name => "Windows";

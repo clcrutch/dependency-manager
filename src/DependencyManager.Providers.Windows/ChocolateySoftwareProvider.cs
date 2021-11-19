@@ -1,8 +1,10 @@
-﻿using Clcrutch.Linq;
+﻿using Clcrutch.Extensions.DependencyInjection;
+using Clcrutch.Linq;
 using DependencyManager.Core;
 using DependencyManager.Core.Models;
 using DependencyManager.Core.Providers;
 using Microsoft.PowerShell;
+using System.Composition;
 using System.Diagnostics;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
@@ -10,6 +12,8 @@ using System.Text.RegularExpressions;
 
 namespace DependencyManager.Providers.Windows
 {
+    [Export(typeof(ISoftwareProvider))]
+    [OperatingSystemRequired(OperatingSystems.Windows)]
     public class ChocolateySoftwareProvider : SoftwareProviderBase
     {
         public override PermissionRequirements RequiredPermissions => PermissionRequirements.SuperUser;

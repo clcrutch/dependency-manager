@@ -1,58 +1,51 @@
-﻿using DependencyManager.Core.Providers;
-using DependencyManager.Providers.Default;
+﻿using DependencyManager.Providers.Default;
 using DependencyManager.Providers.VSCode;
 using DependencyManager.Providers.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using DependencyManager.Providers.Linux;
 using DependencyManager.Providers.Npm;
+using Clcrutch.Extensions.DependencyInjection.Catalogs;
 
 namespace DependencyManager.Lib
 {
     public class Executor
     {
-        private readonly IServiceProvider services;
+        private readonly SemaphoreSlim servicesSemaphore = new SemaphoreSlim(1);
+        private IServiceProvider? services;
 
-        public Executor()
+        public async Task InstallAsync()
         {
-            this.services = ConfigureServices();
+            var services = await GetServiceProviderAsync();
+            await (services.GetService<InstallExecutor>()?.InstallAsync() ?? Task.CompletedTask);
         }
 
-        public Task InstallAsync() =>
-            services.GetService<InstallExecutor>()?.InstallAsync() ?? Task.CompletedTask;
+        private async Task<IServiceProvider> GetServiceProviderAsync()
+        {
+            await servicesSemaphore.WaitAsync();
+            if (services == null)
+            {
+                services = await ConfigureServicesAsync();
+            }
+            servicesSemaphore.Release();
 
-        private IServiceProvider ConfigureServices()
+            return services;
+        }
+
+        private Task<IServiceProvider> ConfigureServicesAsync()
         {
             var services = new ServiceCollection();
 
-            services.AddTransient<IDependencyConfigurationProvider, YamlDependencyConfigurationProvider>();
+            var catalog = new AggregateCatalog(
+                services,
+                new AssemblyCatalog(typeof(InstallExecutor).Assembly, services),
+                new AssemblyCatalog(typeof(AllArchitectureProvider).Assembly, services),
+                new AssemblyCatalog(typeof(WindowsOperatingSystemProvider).Assembly, services),
+                new AssemblyCatalog(typeof(LinuxOperatingSystemProvider).Assembly, services),
+                new AssemblyCatalog(typeof(NpmSoftwareProvider).Assembly, services),
+                new AssemblyCatalog(typeof(VSCodeSoftwareProvider).Assembly, services)
+            );
 
-            services.AddTransient<IArchitectureProvider, AllArchitectureProvider>();
-            services.AddTransient<IArchitectureProvider, Amd64ArchitectureProvider>();
-
-            services.AddTransient<IPlatformProvider, AllPlatformProvider>();
-            services.AddTransient<IPlatformProvider, WindowsPlatformProvider>();
-            services.AddTransient<IPlatformProvider, LinuxPlatformProvider>();
-
-            services.AddTransient<InstallExecutor>();
-
-            if (OperatingSystem.IsWindows())
-            {
-                services.AddTransient<ISoftwareProvider, ChocolateySoftwareProvider>();
-                services.AddTransient<ISoftwareProvider, WindowsFeatureSoftwareProvider>();
-                services.AddTransient<ISoftwareProvider, MsiSoftwareProvider>();
-                services.AddTransient<ISoftwareProvider, AppxSoftwareProvider>();
-                services.AddTransient<IOperatingSystemProvider, WindowsOperatingSystemProvider>();
-            }
-            else if (OperatingSystem.IsLinux())
-            {
-                services.AddTransient<ISoftwareProvider, SnapSoftwareProvider>();
-                services.AddTransient<IOperatingSystemProvider, LinuxOperatingSystemProvider>();
-            }
-
-            services.AddTransient<ISoftwareProvider, NpmSoftwareProvider>();
-            services.AddTransient<ISoftwareProvider, VSCodeSoftwareProvider>();
-
-            return services.BuildServiceProvider();
+            return catalog.GetServiceProvider();
         }
     }
 }

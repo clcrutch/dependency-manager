@@ -10,7 +10,12 @@
 		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <PackageReference Include="System.Composition.AttributedModel" Version="6.0.0" />
+	</ItemGroup>
+
     <ItemGroup>
+      <ProjectReference Include="..\Clcrutch.Extensions.DependencyInjection\Clcrutch.Extensions.DependencyInjection.csproj" />
       <ProjectReference Include="..\DependencyManager.Core\DependencyManager.Core.csproj" />
     </ItemGroup>
 

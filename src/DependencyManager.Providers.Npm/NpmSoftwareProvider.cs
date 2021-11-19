@@ -1,10 +1,12 @@
 ﻿using DependencyManager.Core;
 using DependencyManager.Core.Models;
 using DependencyManager.Core.Providers;
+using System.Composition;
 using System.Diagnostics;
 
 namespace DependencyManager.Providers.Npm
 {
+    [Export(typeof(ISoftwareProvider))]
     public class NpmSoftwareProvider : SoftwareProviderBase
     {
         public override PermissionRequirements RequiredPermissions => PermissionRequirements.None;

@@ -1,11 +1,10 @@
-﻿using System;
+﻿using System.Composition;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using DependencyManager.Core.Providers;
 
 namespace DependencyManager.Providers.Linux
 {
+    [Export(typeof(IPlatformProvider))]
     public class LinuxPlatformProvider : IPlatformProvider
     {
         public string Name => "Linux";

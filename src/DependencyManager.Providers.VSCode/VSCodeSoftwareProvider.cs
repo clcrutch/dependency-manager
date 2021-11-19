@@ -2,9 +2,11 @@
 using DependencyManager.Core.Providers;
 using System.Diagnostics;
 using DependencyManager.Core;
+using System.Composition;
 
 namespace DependencyManager.Providers.VSCode
 {
+    [Export(typeof(ISoftwareProvider))]
     public class VSCodeSoftwareProvider : SoftwareProviderBase
     {
         public override PermissionRequirements RequiredPermissions => PermissionRequirements.None;

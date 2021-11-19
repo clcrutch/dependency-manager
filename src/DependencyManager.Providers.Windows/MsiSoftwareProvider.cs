@@ -1,13 +1,17 @@
-﻿using DependencyManager.Core;
+﻿using Clcrutch.Extensions.DependencyInjection;
+using DependencyManager.Core;
 using DependencyManager.Core.Models;
 using DependencyManager.Core.Providers;
 using Microsoft.Win32;
+using System.Composition;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 
 namespace DependencyManager.Providers.Windows
 {
+    [Export(typeof(ISoftwareProvider))]
+    [OperatingSystemRequired(OperatingSystems.Windows)]
     public class MsiSoftwareProvider : FileSoftwareProviderBase
     {
         public override PermissionRequirements RequiredPermissions => PermissionRequirements.SuperUser;

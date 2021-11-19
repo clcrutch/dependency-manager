@@ -1,10 +1,14 @@
-﻿using DependencyManager.Core.Providers;
+﻿using Clcrutch.Extensions.DependencyInjection;
+using DependencyManager.Core.Providers;
+using System.Composition;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
 
 namespace DependencyManager.Providers.Windows
 {
+    [Export(typeof(IOperatingSystemProvider))]
+    [OperatingSystemRequired(OperatingSystems.Windows)]
     public class WindowsOperatingSystemProvider : IOperatingSystemProvider
     {
         /// <summary>

@@ -1,11 +1,15 @@
-﻿using DependencyManager.Core;
+﻿using Clcrutch.Extensions.DependencyInjection;
+using DependencyManager.Core;
 using DependencyManager.Core.Models;
 using DependencyManager.Core.Providers;
 using Microsoft.Dism;
 using Newtonsoft.Json;
+using System.Composition;
 
 namespace DependencyManager.Providers.Windows
 {
+    [Export(typeof(ISoftwareProvider))]
+    [OperatingSystemRequired(OperatingSystems.Windows)]
     public class WindowsFeatureSoftwareProvider : SoftwareProviderBase, IDisposable
     {
         private bool disposed = false;

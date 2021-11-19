@@ -1,9 +1,11 @@
 ﻿using Clcrutch.Linq;
 using DependencyManager.Core.Providers;
+using System.Composition;
 using YamlDotNet.Serialization;
 
 namespace DependencyManager.Providers.Default
 {
+    [Export(typeof(IDependencyConfigurationProvider))]
     public class YamlDependencyConfigurationProvider : IDependencyConfigurationProvider
     {
         private readonly IEnumerable<IPlatformProvider> platformProviders;

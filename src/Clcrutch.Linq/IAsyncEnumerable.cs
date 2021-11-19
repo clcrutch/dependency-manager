@@ -62,5 +62,17 @@
                 }
             }
         }
+
+        public static async IAsyncEnumerable<T> Where<T>(this IAsyncEnumerable<T> @this, Func<T, Task<bool>> predicate)
+        {
+            var enumerator = @this.GetAsyncEnumerator();
+            while (await enumerator.MoveNextAsync())
+            {
+                if (await predicate(enumerator.Current))
+                {
+                    yield return enumerator.Current;
+                }
+            }
+        }
     }
 }

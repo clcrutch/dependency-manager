@@ -19,7 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyManager.Providers
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyManager.Providers.Linux", "src\DependencyManager.Providers.Linux\DependencyManager.Providers.Linux.csproj", "{F673CB4E-F892-4EDE-8E98-01B99C2B98CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyManager.Providers.Npm", "src\DependencyManager.Providers.Npm\DependencyManager.Providers.Npm.csproj", "{73299518-D7F8-40CF-9EEE-D1B3092D5D91}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyManager.Providers.Npm", "src\DependencyManager.Providers.Npm\DependencyManager.Providers.Npm.csproj", "{73299518-D7F8-40CF-9EEE-D1B3092D5D91}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clcrutch.Extensions.DependencyInjection", "src\Clcrutch.Extensions.DependencyInjection\Clcrutch.Extensions.DependencyInjection.csproj", "{A965EC4B-FE8B-4F65-9687-66AC48783F4C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{73299518-D7F8-40CF-9EEE-D1B3092D5D91}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73299518-D7F8-40CF-9EEE-D1B3092D5D91}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73299518-D7F8-40CF-9EEE-D1B3092D5D91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A965EC4B-FE8B-4F65-9687-66AC48783F4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A965EC4B-FE8B-4F65-9687-66AC48783F4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A965EC4B-FE8B-4F65-9687-66AC48783F4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A965EC4B-FE8B-4F65-9687-66AC48783F4C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,10 +1,14 @@
+using System.Composition;
 using System.Diagnostics;
+using Clcrutch.Extensions.DependencyInjection;
 using DependencyManager.Core;
 using DependencyManager.Core.Models;
 using DependencyManager.Core.Providers;
 
 namespace DependencyManager.Providers.Linux
 {
+    [Export(typeof(ISoftwareProvider))]
+    [OperatingSystemRequired(OperatingSystems.Linux)]
     public class SnapSoftwareProvider : SoftwareProviderBase
     {
         private const string CLASSIC_CHECK =

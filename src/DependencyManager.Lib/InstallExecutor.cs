@@ -2,9 +2,11 @@
 using Clcrutch.Linq;
 using DependencyManager.Core;
 using DependencyManager.Core.Models;
+using System.Composition;
 
 namespace DependencyManager.Lib
 {
+    [Export]
     internal class InstallExecutor
     {
         private readonly IEnumerable<ISoftwareProvider> softwareInstallationProviders;

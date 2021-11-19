@@ -1,9 +1,13 @@
+using System.Composition;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Clcrutch.Extensions.DependencyInjection;
 using DependencyManager.Core.Providers;
 
 namespace DependencyManager.Providers.Linux
 {
+    [Export(typeof(IOperatingSystemProvider))]
+    [OperatingSystemRequired(OperatingSystems.Linux)]
     public class LinuxOperatingSystemProvider : IOperatingSystemProvider
     {
         [DllImport("libc")]

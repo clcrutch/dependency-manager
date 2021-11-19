@@ -2,6 +2,7 @@
 using DependencyManager.Core.Models;
 using DependencyManager.Core.Providers;
 using Microsoft.PowerShell;
+using System.Composition;
 using System.IO.Compression;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
@@ -9,6 +10,7 @@ using System.Xml.Linq;
 
 namespace DependencyManager.Providers.Windows
 {
+    [Export(typeof(ISoftwareProvider))]
     public class AppxSoftwareProvider : FileSoftwareProviderBase
     {
         public override PermissionRequirements RequiredPermissions => PermissionRequirements.None;
