@@ -15,7 +15,7 @@ namespace DependencyManager.Core.Providers
         {
             if (IsWebUrl(package))
             {
-                var cachePath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Clcrutch", "DependencyManager", "cache");
+                var cachePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Clcrutch", "DependencyManager", "cache");
                 var cacheDirectoryInfo = new DirectoryInfo(cachePath);
 
                 if (!cacheDirectoryInfo.Exists)
@@ -28,7 +28,7 @@ namespace DependencyManager.Core.Providers
                 {
                     filename = $"{filename}{defaultExtension}";
                 }
-                var filepath = Path.Join(cachePath, filename);
+                var filepath = Path.Combine(cachePath, filename);
 
                 var fileinfo = new FileInfo(filepath);
 

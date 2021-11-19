@@ -6,6 +6,7 @@ using System.Composition;
 using System.IO.Compression;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using System.Runtime.InteropServices;
 using System.Xml.Linq;
 
 namespace DependencyManager.Providers.Windows
@@ -43,7 +44,7 @@ namespace DependencyManager.Providers.Windows
             ps.AddScript("Import-Module Appx -UseWindowsPowerShell");
             ps.AddScript($"Add-AppxPackage '{package.PackageName}'");
 
-            await ps.InvokeAsync();
+            ps.Invoke();
 
             if (ps.HadErrors)
             {
@@ -81,10 +82,10 @@ namespace DependencyManager.Providers.Windows
             ps.AddScript("Import-Module Appx -UseWindowsPowerShell");
             ps.AddScript($"Get-AppxPackage '{appxName}'");
 
-            return (await ps.InvokeAsync()).Count > 0;
+            return ps.Invoke().Count > 0;
         }
 
         public override Task<bool> TestPlatformAsync() =>
-            Task.FromResult(OperatingSystem.IsWindowsVersionAtLeast(10));
+            Task.FromResult(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && Environment.OSVersion.Version >= new Version(10, 0)); // At least Windows 10.
     }
 }

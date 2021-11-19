@@ -8,6 +8,7 @@ using System.Composition;
 using System.Diagnostics;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
 namespace DependencyManager.Providers.Windows
@@ -36,7 +37,7 @@ namespace DependencyManager.Providers.Windows
 
             using var powershell = PowerShell.Create(initialSessionState);
             powershell.AddScript(script);
-            await powershell.InvokeAsync();
+            powershell.Invoke();
 
             Environment.SetEnvironmentVariable("PATH",
                 $"{Environment.GetEnvironmentVariable("Path", EnvironmentVariableTarget.Machine)};" +
@@ -65,7 +66,7 @@ namespace DependencyManager.Providers.Windows
                 Arguments = arguments
             });
 
-            await (process?.WaitForExitAsync() ?? Task.CompletedTask);
+            process?.WaitForExit();
 
             if (process == null || process.ExitCode != 0)
             {
@@ -80,7 +81,7 @@ namespace DependencyManager.Providers.Windows
         }
 
         public override Task<bool> TestPlatformAsync() =>
-            Task.FromResult(OperatingSystem.IsWindows());
+            Task.FromResult(RuntimeInformation.IsOSPlatform(OSPlatform.Windows));
 
         private async Task<Dictionary<string, string>?> GetInstalledPackagesAsync()
         {
@@ -94,9 +95,9 @@ namespace DependencyManager.Providers.Windows
 
             if (process != null)
             {
-                await process.WaitForExitAsync();
+                process.WaitForExit();
                 var packageString = await process.StandardOutput.ReadToEndAsync();
-                var packageLines = packageString.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
+                var packageLines = packageString.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
 
                 var index = packageLines.IndexOf((from l in packageLines
                                                   where Regex.Match(l, "[0-9]+ packages installed.").Success
@@ -122,9 +123,9 @@ namespace DependencyManager.Providers.Windows
 
             if (process != null)
             {
-                await process.WaitForExitAsync();
+                process.WaitForExit();
                 var packageString = await process.StandardOutput.ReadToEndAsync();
-                var packageLines = packageString.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
+                var packageLines = packageString.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
 
                 var packages = from l in packageLines.Skip(1)
                                where !string.IsNullOrWhiteSpace(l)

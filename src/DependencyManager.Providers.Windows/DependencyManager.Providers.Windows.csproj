@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>netstandard2.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<LangVersion>10</LangVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -12,12 +13,13 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Dism" Version="2.4.0" />
-		<PackageReference Include="Microsoft.PowerShell.SDK" Version="7.2.0" />
 		<PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
 		<PackageReference Include="Nerdbank.GitVersioning" Version="3.4.244">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		<PackageReference Include="PowerShellStandard.Library" Version="5.1.0" />
 		<PackageReference Include="System.Composition.AttributedModel" Version="6.0.0" />
 	</ItemGroup>
 

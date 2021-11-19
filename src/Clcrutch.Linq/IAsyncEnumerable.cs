@@ -1,4 +1,6 @@
-﻿namespace Clcrutch.Linq
+﻿using System.Collections.Generic;
+
+namespace Clcrutch.Linq
 {
     public static class IAsyncEnumerable
     {

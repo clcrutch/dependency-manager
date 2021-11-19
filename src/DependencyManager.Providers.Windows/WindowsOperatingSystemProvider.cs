@@ -48,7 +48,7 @@ namespace DependencyManager.Providers.Windows
 
         public Task<bool> IsSuperUserAsync()
         {
-            if (OperatingSystem.IsWindows())
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 using var identity = WindowsIdentity.GetCurrent();
                 var principal = new WindowsPrincipal(identity);

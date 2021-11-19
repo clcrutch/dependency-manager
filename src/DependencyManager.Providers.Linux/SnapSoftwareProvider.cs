@@ -54,9 +54,9 @@ namespace DependencyManager.Providers.Linux
 
             if (process != null)
             {
-                await process.WaitForExitAsync();
+                process.WaitForExit();
                 var results = await process.StandardError.ReadToEndAsync();
-                var needsClassic = (from l in results.Split('\n', StringSplitOptions.RemoveEmptyEntries)
+                var needsClassic = (from l in results.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
                                     where l.Contains(CLASSIC_CHECK)
                                     select l).Any();
 
@@ -91,13 +91,13 @@ namespace DependencyManager.Providers.Linux
 
             if (process != null)
             {
-                await process.WaitForExitAsync();
+                process.WaitForExit();
                 var packageString = await process.StandardOutput.ReadToEndAsync();
-                var packageLines = packageString.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
+                var packageLines = packageString.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
 
                 return (from l in packageLines.Skip(1)
                         where !string.IsNullOrWhiteSpace(l)
-                        select l.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries)).ToDictionary(s => s[0], s => s[1]);
+                        select l.Trim().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)).ToDictionary(s => s[0], s => s[1]);
             }
 
             return null;

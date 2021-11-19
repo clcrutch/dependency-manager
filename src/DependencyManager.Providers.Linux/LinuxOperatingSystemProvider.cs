@@ -25,9 +25,9 @@ namespace DependencyManager.Providers.Linux
 
             if (process != null)
             {
-                await process.WaitForExitAsync();
+                process.WaitForExit();
                 var whichString = await process.StandardOutput.ReadToEndAsync();
-                return whichString.Split('\n', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+                return whichString.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
             }
 
             return null;

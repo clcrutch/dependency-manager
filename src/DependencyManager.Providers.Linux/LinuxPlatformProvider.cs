@@ -1,5 +1,6 @@
 ﻿using System.Composition;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using DependencyManager.Core.Providers;
 
 namespace DependencyManager.Providers.Linux
@@ -10,11 +11,11 @@ namespace DependencyManager.Providers.Linux
         public string Name => "Linux";
 
         public Task<bool> TestAsync() =>
-            Task.FromResult(OperatingSystem.IsLinux());
+            Task.FromResult(RuntimeInformation.IsOSPlatform(OSPlatform.Linux));
 
         public async Task<bool> TestAsync(string version)
         {
-            if (!OperatingSystem.IsLinux())
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 return false;
             }
@@ -29,7 +30,7 @@ namespace DependencyManager.Providers.Linux
 
             if (process != null)
             {
-                await process.WaitForExitAsync();
+                process.WaitForExit();
                 var unameString = await process.StandardOutput.ReadToEndAsync();
                 var versionPart = unameString.Substring(0, unameString.IndexOf('-'));
 

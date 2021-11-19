@@ -36,7 +36,7 @@ namespace DependencyManager.Providers.VSCode
                 Arguments = $"--install-extension {package.PackageName}"
             });
 
-            await (process?.WaitForExitAsync() ?? Task.CompletedTask);
+            process?.WaitForExit();
 
             if (process == null || process.ExitCode != 0)
             {
@@ -56,9 +56,9 @@ namespace DependencyManager.Providers.VSCode
 
             if (process != null)
             {
-                await process.WaitForExitAsync();
+                process.WaitForExit();
                 var packageString = await process.StandardOutput.ReadToEndAsync();
-                var packageLines = packageString.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
+                var packageLines = packageString.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
 
                 return packageLines.Contains(package.PackageName);
             }

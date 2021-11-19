@@ -42,7 +42,7 @@ namespace DependencyManager.Providers.Windows
                 Arguments = $"/i {fileinfo.Name} /quiet /qn /norestart",
                 WorkingDirectory = fileinfo.DirectoryName
             });
-            await (process?.WaitForExitAsync() ?? Task.CompletedTask);
+            process?.WaitForExit();
 
             if (process == null || process.ExitCode != 0)
             {
@@ -55,11 +55,11 @@ namespace DependencyManager.Providers.Windows
             var fileinfo = await GetPackageFileAsync(package, ".msi");
             var productName = GetProductName(fileinfo.FullName);
 
-            if (OperatingSystem.IsWindows())
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 var productsKey = Registry.ClassesRoot.OpenSubKey($"Installer\\Products");
                 return (from s in productsKey?.GetSubKeyNames()
-                        where OperatingSystem.IsWindows() &&
+                        where RuntimeInformation.IsOSPlatform(OSPlatform.Windows) &&
                             productsKey?.OpenSubKey(s)?.GetValue("ProductName")?.ToString() == productName
                         select s).Any();
             }
@@ -68,7 +68,7 @@ namespace DependencyManager.Providers.Windows
         }
 
         public override Task<bool> TestPlatformAsync() =>
-            Task.FromResult(OperatingSystem.IsWindows());
+            Task.FromResult(RuntimeInformation.IsOSPlatform(OSPlatform.Windows));
 
         [DllImport("msi.dll", CharSet = CharSet.Unicode, PreserveSig = true, SetLastError = true, ExactSpelling = true)]
         private static extern UInt32 MsiOpenPackageW(string szPackagePath, out IntPtr hProduct);

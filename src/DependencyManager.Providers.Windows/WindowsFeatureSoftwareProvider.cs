@@ -5,6 +5,7 @@ using DependencyManager.Core.Providers;
 using Microsoft.Dism;
 using Newtonsoft.Json;
 using System.Composition;
+using System.Runtime.InteropServices;
 
 namespace DependencyManager.Providers.Windows
 {
@@ -77,7 +78,7 @@ namespace DependencyManager.Providers.Windows
         }
 
         public override Task<bool> TestPlatformAsync() =>
-            Task.FromResult(OperatingSystem.IsWindowsVersionAtLeast(6, 1)); // At least Windows 7.
+            Task.FromResult(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && Environment.OSVersion.Version >= new Version(6, 1)); // At least Windows 7.
 
         private DismSession GetDismSession()
         {
@@ -101,7 +102,7 @@ namespace DependencyManager.Providers.Windows
 
         private FileInfo GetCacheInfo()
         {
-            var cachePath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Clcrutch", "DependencyManager", "cache");
+            var cachePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Clcrutch", "DependencyManager", "cache");
             var cacheDirectoryInfo = new DirectoryInfo(cachePath);
 
             if (!cacheDirectoryInfo.Exists)

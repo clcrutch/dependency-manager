@@ -1,5 +1,6 @@
 ﻿using DependencyManager.Core.Providers;
 using System.Composition;
+using System.Runtime.InteropServices;
 
 namespace DependencyManager.Providers.Windows
 {
@@ -9,12 +10,12 @@ namespace DependencyManager.Providers.Windows
         public string Name => "Windows";
 
         public Task<bool> TestAsync() =>
-            Task.FromResult(OperatingSystem.IsWindows());
+            Task.FromResult(RuntimeInformation.IsOSPlatform(OSPlatform.Windows));
 
-        public Task<bool> TestAsync(string version)
+        public async Task<bool> TestAsync(string version)
         {
             var versionObj = Version.Parse(version);
-            return Task.FromResult(OperatingSystem.IsWindowsVersionAtLeast(versionObj.Major, versionObj.Minor, versionObj.Build, versionObj.Revision));
+            return (await TestAsync()) && Environment.OSVersion.Version >= versionObj;
         }
     }
 }

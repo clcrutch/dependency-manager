@@ -40,7 +40,7 @@ namespace DependencyManager.Providers.Npm
                 throw new Exception("Process did not start correctly.");
             }
 
-            await process.WaitForExitAsync();
+            process.WaitForExit();
 
             if (process.ExitCode != 0)
             {
@@ -62,7 +62,7 @@ namespace DependencyManager.Providers.Npm
                 throw new Exception("Process did not start correctly.");
             }
 
-            await process.WaitForExitAsync();
+            process.WaitForExit();
             return process.ExitCode == 0;
         }
 
