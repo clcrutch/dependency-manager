@@ -9,10 +9,7 @@ namespace Clcrutch.Extensions.DependencyInjection.Catalogs
         protected Catalog[] Catalogs { get; }
 
         public AggregateCatalog(params Catalog[] catalogs)
-            : this(new ServiceCollection(), catalogs)
-        {
-            Catalogs = catalogs;
-        }
+            : this(new ServiceCollection(), catalogs) { }
 
         public AggregateCatalog(IServiceCollection serviceCollection, params Catalog[] catalogs)
             : base(serviceCollection)
@@ -20,13 +17,8 @@ namespace Clcrutch.Extensions.DependencyInjection.Catalogs
             Catalogs = catalogs;
         }
 
-        protected internal override async Task<IEnumerable<Type>> GetContainedTypesAsync() =>
+        protected internal override async Task<IEnumerable<Type>> GetAvailableTypesAsync() =>
             (await Task.WhenAll(from c in Catalogs
-                                select c.GetContainedTypesAsync())).SelectMany(x => x).ToList();
-
-        protected override Task<IEnumerable<Assembly>> GetAssembliesAsync()
-        {
-            throw new NotImplementedException();
-        }
+                                select c.GetAvailableTypesAsync())).SelectMany(x => x).ToList();
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Clcrutch.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using System.Composition;
-using System.Reflection;
 
 namespace Clcrutch.Extensions.DependencyInjection.Catalogs
 {
@@ -43,21 +42,14 @@ namespace Clcrutch.Extensions.DependencyInjection.Catalogs
             return ServiceCollection.BuildServiceProvider();
         }
 
-        protected abstract Task<IEnumerable<Assembly>> GetAssembliesAsync();
+        protected internal abstract Task<IEnumerable<Type>> GetAvailableTypesAsync();
 
-        protected internal virtual async Task<IEnumerable<Type>> GetContainedTypesAsync() =>
-            await GetAssembliesAsync()
+        protected virtual async Task<IEnumerable<Type>> GetContainedTypesAsync() =>
+            await GetAvailableTypesAsync()
                 .Cast()
-                .Select(assembly => assembly.GetTypes())
-                .SelectMany(t => t)
-                .Where(t => Test(t))
+                .Where(t => t.CustomAttributes.Any(x => x.AttributeType.IsAssignableTo(typeof(ExportAttribute))))
                 .Where(t => TestOperatingSystemAsync(t))
                 .ToArrayAsync();
-
-        protected bool Test(Type t)
-        {
-            return t.CustomAttributes.Any(x => x.AttributeType.IsAssignableTo(typeof(ExportAttribute)));
-        }
 
         private async Task<bool> TestOperatingSystemAsync(Type containedType)
         {

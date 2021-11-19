@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Clcrutch.Extensions.DependencyInjection.Catalogs
 {
-    public class AssemblyCatalog : Catalog
+    public class AssemblyCatalog : AssemblyCatalogBase
     {
         public Assembly Assembly { get; set; }
 
