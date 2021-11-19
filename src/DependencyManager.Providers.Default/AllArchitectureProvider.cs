@@ -1,5 +1,4 @@
 ﻿using DependencyManager.Core.Providers;
-using System.Threading.Tasks;
 
 namespace DependencyManager.Providers.Default
 {

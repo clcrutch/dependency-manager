@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Clcrutch.Linq
+﻿namespace Clcrutch.Linq
 {
     public static class IAsyncEnumerable
     {
@@ -16,6 +10,7 @@ namespace Clcrutch.Linq
                 yield return selector(enumerator.Current);
             }
         }
+
         public static async IAsyncEnumerable<TResult> Select<TSource, TResult>(this IAsyncEnumerable<TSource> @this, Func<TSource, Task<TResult>> selector)
         {
             var enumerator = @this.GetAsyncEnumerator();

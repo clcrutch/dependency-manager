@@ -1,10 +1,5 @@
 ﻿using DependencyManager.Core.Providers;
-using System;
-using System.Collections.Generic;
 using Clcrutch.Linq;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DependencyManager.Core;
 using DependencyManager.Core.Models;
 
@@ -30,7 +25,7 @@ namespace DependencyManager.Lib
 
             var softwarePackagesByName = softwarePackages
                 .Where(x => !string.IsNullOrEmpty(x.Name))
-                .ToDictionary(x => x.Name, x => x);
+                .ToDictionary(x => x.Name ?? string.Empty, x => x);
 
             foreach (var package in softwarePackages)
             {

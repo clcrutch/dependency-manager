@@ -1,8 +1,5 @@
-using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using DependencyManager.Core.Providers;
 
 namespace DependencyManager.Providers.Linux
@@ -12,7 +9,7 @@ namespace DependencyManager.Providers.Linux
         [DllImport("libc")]
         public static extern uint getuid();
         
-        public async Task<string> GetFullExecutablePathAsync(string executable)
+        public async Task<string?> GetFullExecutablePathAsync(string executable)
         {
             var process = Process.Start(new ProcessStartInfo
             {
@@ -22,9 +19,14 @@ namespace DependencyManager.Providers.Linux
                 CreateNoWindow = true
             });
 
-            await process.WaitForExitAsync();
-            var whichString = await process.StandardOutput.ReadToEndAsync();
-            return whichString.Split('\n', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+            if (process != null)
+            {
+                await process.WaitForExitAsync();
+                var whichString = await process.StandardOutput.ReadToEndAsync();
+                return whichString.Split('\n', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+            }
+
+            return null;
         }
 
         public Task<bool> IsSuperUserAsync() =>

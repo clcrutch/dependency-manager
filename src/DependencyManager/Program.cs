@@ -1,9 +1,4 @@
-﻿using DependencyManager.Core.Providers;
-using DependencyManager.Lib;
-using DependencyManager.Providers.Default;
-using McMaster.Extensions.CommandLineUtils;
-using System;
-using System.Threading.Tasks;
+﻿using McMaster.Extensions.CommandLineUtils;
 
 namespace DependencyManager
 {

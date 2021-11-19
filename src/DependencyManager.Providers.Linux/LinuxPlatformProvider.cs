@@ -20,7 +20,6 @@ namespace DependencyManager.Providers.Linux
                 return false;
             }
             
-            
             var process = Process.Start(new ProcessStartInfo
             {
                 FileName = "uname",
@@ -29,14 +28,19 @@ namespace DependencyManager.Providers.Linux
                 CreateNoWindow = true
             });
 
-            await process.WaitForExitAsync();
-            var unameString = await process.StandardOutput.ReadToEndAsync();
-            var versionPart = unameString.Substring(0, unameString.IndexOf('-'));
+            if (process != null)
+            {
+                await process.WaitForExitAsync();
+                var unameString = await process.StandardOutput.ReadToEndAsync();
+                var versionPart = unameString.Substring(0, unameString.IndexOf('-'));
 
-            var unameVersion = Version.Parse(versionPart);
-            var specifiedVersion = Version.Parse(version);
+                var unameVersion = Version.Parse(versionPart);
+                var specifiedVersion = Version.Parse(version);
 
-            return unameVersion >= specifiedVersion;
+                return unameVersion >= specifiedVersion;
+            }
+
+            return false;
         }
     }
 }

@@ -1,13 +1,8 @@
-﻿using Clcrutch.Linq;
-using DependencyManager.Core;
-using DependencyManager.Core.Providers;
+﻿using DependencyManager.Core.Providers;
 using DependencyManager.Providers.Default;
 using DependencyManager.Providers.VSCode;
 using DependencyManager.Providers.Windows;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using DependencyManager.Providers.Linux;
 using DependencyManager.Providers.Npm;
 
@@ -23,7 +18,7 @@ namespace DependencyManager.Lib
         }
 
         public Task InstallAsync() =>
-            services.GetService<InstallExecutor>()?.InstallAsync();
+            services.GetService<InstallExecutor>()?.InstallAsync() ?? Task.CompletedTask;
 
         private IServiceProvider ConfigureServices()
         {

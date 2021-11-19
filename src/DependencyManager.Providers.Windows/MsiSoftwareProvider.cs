@@ -2,15 +2,9 @@
 using DependencyManager.Core.Models;
 using DependencyManager.Core.Providers;
 using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace DependencyManager.Providers.Windows
 {
@@ -44,9 +38,9 @@ namespace DependencyManager.Providers.Windows
                 Arguments = $"/i {fileinfo.Name} /quiet /qn /norestart",
                 WorkingDirectory = fileinfo.DirectoryName
             });
-            await process.WaitForExitAsync();
+            await (process?.WaitForExitAsync() ?? Task.CompletedTask);
 
-            if (process.ExitCode != 0)
+            if (process == null || process.ExitCode != 0)
             {
                 throw new InstallFailedException();
             }
@@ -60,9 +54,9 @@ namespace DependencyManager.Providers.Windows
             if (OperatingSystem.IsWindows())
             {
                 var productsKey = Registry.ClassesRoot.OpenSubKey($"Installer\\Products");
-                return (from s in productsKey.GetSubKeyNames()
+                return (from s in productsKey?.GetSubKeyNames()
                         where OperatingSystem.IsWindows() &&
-                            productsKey.OpenSubKey(s).GetValue("ProductName")?.ToString() == productName
+                            productsKey?.OpenSubKey(s)?.GetValue("ProductName")?.ToString() == productName
                         select s).Any();
             }
 
@@ -78,7 +72,7 @@ namespace DependencyManager.Providers.Windows
         private static extern uint MsiCloseHandle(IntPtr hAny);
         [DllImport("msi.dll", CharSet = CharSet.Unicode, PreserveSig = true, SetLastError = true, ExactSpelling = true)]
         private static extern uint MsiGetPropertyW(IntPtr hAny, string name, StringBuilder buffer, ref int bufferLength);
-        private static string GetPackageProperty(string msi, string property)
+        private static string? GetPackageProperty(string msi, string property)
         {
             IntPtr MsiHandle = IntPtr.Zero;
             try
@@ -101,11 +95,11 @@ namespace DependencyManager.Providers.Windows
                 }
             }
         }
-        private static string GetProductCode(string msi)
+        private static string? GetProductCode(string msi)
         {
             return GetPackageProperty(msi, "ProductCode");
         }
-        private static string GetProductName(string msi)
+        private static string? GetProductName(string msi)
         {
             return GetPackageProperty(msi, "ProductName");
         }

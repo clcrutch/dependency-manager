@@ -1,16 +1,6 @@
 ﻿using Clcrutch.Linq;
 using DependencyManager.Core.Providers;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using YamlDotNet.Core;
-using YamlDotNet.RepresentationModel;
 using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
 
 namespace DependencyManager.Providers.Default
 {
@@ -43,7 +33,7 @@ namespace DependencyManager.Providers.Default
             var relevantSections = await sections
                                     .Where(s => TestIfRelevantAsync(s.Value))
                                     .Select(s => s.Value as IEnumerable<KeyValuePair<object, object>>)
-                                    .SelectMany(s => s)
+                                    .SelectMany(s => s ?? Enumerable.Empty<KeyValuePair<object, object>>())
                                     .Where(g => g.Key.ToString() != "platform" && g.Key.ToString() != "architecture" && g.Key.ToString() != "version")
                                     .ToArrayAsync();
 
@@ -93,10 +83,8 @@ namespace DependencyManager.Providers.Default
                     return false;
                 }
 
-                if (dict.ContainsKey("version"))
+                if (dict.ContainsKey("version") && dict["version"] is string version)
                 {
-                    var version = dict["version"] as string;
-
                     return (await Task.WhenAll(platformProvider.TestAsync(version), archProvider.TestAsync())).All(x => x);
                 }
                 else

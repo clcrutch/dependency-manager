@@ -3,20 +3,13 @@ using DependencyManager.Core.Models;
 using DependencyManager.Core.Providers;
 using Microsoft.Dism;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DependencyManager.Providers.Windows
 {
     public class WindowsFeatureSoftwareProvider : SoftwareProviderBase, IDisposable
     {
         private bool disposed = false;
-        private DismSession session;
+        private DismSession? session;
 
         public override PermissionRequirements RequiredPermissions => PermissionRequirements.SuperUser;
         protected override string SectionName => "feature";
@@ -37,8 +30,8 @@ namespace DependencyManager.Providers.Windows
         {
             if (!disposed)
             {
-                session.Close();
-                session.Dispose();
+                session?.Close();
+                session?.Dispose();
                 DismApi.Shutdown();
                 disposed = true;
 
@@ -119,7 +112,7 @@ namespace DependencyManager.Providers.Windows
         private Dictionary<string, DismPackageFeatureState> GetCurrentFeatures() =>
             DismApi.GetFeatures(GetDismSession()).ToDictionary(x => x.FeatureName, x => x.State);
 
-        private async Task<Dictionary<string, DismPackageFeatureState>> GetCachedFeaturesAsync()
+        private async Task<Dictionary<string, DismPackageFeatureState>?> GetCachedFeaturesAsync()
         {
             var cacheInfo = GetCacheInfo();
 

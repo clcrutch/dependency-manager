@@ -1,9 +1,4 @@
 ﻿using DependencyManager.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DependencyManager.Core.Providers
 {
@@ -28,7 +23,7 @@ namespace DependencyManager.Core.Providers
             var yaml = await dependencyConfigurationProvider.GetSoftwareConfigurationAsync();
             if (!yaml.ContainsKey(SectionName))
             {
-                return null;
+                return Enumerable.Empty<SoftwarePackage>();
             }
 
             var packages = yaml[SectionName] as Dictionary<object, object>;

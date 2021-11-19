@@ -3,17 +3,10 @@ using DependencyManager.Core;
 using DependencyManager.Core.Models;
 using DependencyManager.Core.Providers;
 using Microsoft.PowerShell;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
-using System.Net;
-using System.Net.Http;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace DependencyManager.Providers.Windows
 {
@@ -68,9 +61,9 @@ namespace DependencyManager.Providers.Windows
                 Arguments = arguments
             });
 
-            await process.WaitForExitAsync();
+            await (process?.WaitForExitAsync() ?? Task.CompletedTask);
 
-            if (process.ExitCode != 0)
+            if (process == null || process.ExitCode != 0)
             {
                 throw new InstallFailedException();
             }
@@ -79,13 +72,13 @@ namespace DependencyManager.Providers.Windows
         public override async Task<bool> TestPackageInstalledAsync(SoftwarePackage package)
         {
             var installedPackages = await GetInstalledPackagesAsync();
-            return installedPackages.ContainsKey(package.PackageName) && (true || !await GetUpgradePending(package.PackageName));
+            return (installedPackages?.ContainsKey(package.PackageName) ?? false) && (true || !await GetUpgradePending(package.PackageName));
         }
 
         public override Task<bool> TestPlatformAsync() =>
             Task.FromResult(OperatingSystem.IsWindows());
 
-        private async Task<Dictionary<string, string>> GetInstalledPackagesAsync()
+        private async Task<Dictionary<string, string>?> GetInstalledPackagesAsync()
         {
             var process = Process.Start(new ProcessStartInfo
             {
@@ -95,20 +88,25 @@ namespace DependencyManager.Providers.Windows
                 CreateNoWindow = true
             });
 
-            await process.WaitForExitAsync();
-            var packageString = await process.StandardOutput.ReadToEndAsync();
-            var packageLines = packageString.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
+            if (process != null)
+            {
+                await process.WaitForExitAsync();
+                var packageString = await process.StandardOutput.ReadToEndAsync();
+                var packageLines = packageString.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
 
-            var index = packageLines.IndexOf((from l in packageLines
-                                              where Regex.Match(l, "[0-9]+ packages installed.").Success
-                                              select l).Single());
+                var index = packageLines.IndexOf((from l in packageLines
+                                                  where Regex.Match(l, "[0-9]+ packages installed.").Success
+                                                  select l).Single());
 
-            return (from l in packageLines.Skip(1).Take(index - 1)
-                    where !string.IsNullOrWhiteSpace(l)
-                    select l.Trim().Split(' ')).ToDictionary(s => s[0], s => s[1]);
+                return (from l in packageLines.Skip(1).Take(index - 1)
+                        where !string.IsNullOrWhiteSpace(l)
+                        select l.Trim().Split(' ')).ToDictionary(s => s[0], s => s[1]);
+            }
+
+            return null;
         }
 
-        private async Task<string> GetLatestVersionAsync(string package)
+        private async Task<string?> GetLatestVersionAsync(string package)
         {
             var process = Process.Start(new ProcessStartInfo
             {
@@ -118,24 +116,34 @@ namespace DependencyManager.Providers.Windows
                 CreateNoWindow = true
             });
 
-            await process.WaitForExitAsync();
-            var packageString = await process.StandardOutput.ReadToEndAsync();
-            var packageLines = packageString.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
+            if (process != null)
+            {
+                await process.WaitForExitAsync();
+                var packageString = await process.StandardOutput.ReadToEndAsync();
+                var packageLines = packageString.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
 
-            var packages = from l in packageLines.Skip(1)
-                           where !string.IsNullOrWhiteSpace(l)
-                           select l.Trim().Split(' ');
+                var packages = from l in packageLines.Skip(1)
+                               where !string.IsNullOrWhiteSpace(l)
+                               select l.Trim().Split(' ');
 
-            var versionDict = (from p in packages
-                               where p.Count() >= 2
-                               select p).ToDictionary(s => s[0], s => s[1]);
+                var versionDict = (from p in packages
+                                   where p.Length >= 2
+                                   select p).ToDictionary(s => s[0], s => s[1]);
 
-            return versionDict[package];
+                return versionDict[package];
+            }
+
+            return null;
         }
 
         private async Task<bool> GetUpgradePending(string package)
         {
             var installedPackages = await GetInstalledPackagesAsync();
+
+            if (installedPackages == null)
+            {
+                return false;
+            }
 
             if (!installedPackages.ContainsKey(package))
             {

@@ -1,9 +1,5 @@
 ﻿using DependencyManager.Core.Models;
 using DependencyManager.Core.Providers;
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Diagnostics;
 using DependencyManager.Core;
 
@@ -38,9 +34,9 @@ namespace DependencyManager.Providers.VSCode
                 Arguments = $"--install-extension {package.PackageName}"
             });
 
-            await process.WaitForExitAsync();
+            await (process?.WaitForExitAsync() ?? Task.CompletedTask);
 
-            if (process.ExitCode != 0)
+            if (process == null || process.ExitCode != 0)
             {
                 throw new InstallFailedException();
             }
@@ -56,11 +52,16 @@ namespace DependencyManager.Providers.VSCode
                 CreateNoWindow = true
             });
 
-            await process.WaitForExitAsync();
-            var packageString = await process.StandardOutput.ReadToEndAsync();
-            var packageLines = packageString.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
+            if (process != null)
+            {
+                await process.WaitForExitAsync();
+                var packageString = await process.StandardOutput.ReadToEndAsync();
+                var packageLines = packageString.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
 
-            return packageLines.Contains(package.PackageName);
+                return packageLines.Contains(package.PackageName);
+            }
+
+            return false;
         }
 
         public override async Task<bool> TestPlatformAsync() =>

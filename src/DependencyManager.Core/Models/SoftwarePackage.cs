@@ -1,9 +1,4 @@
 ﻿using DependencyManager.Core.Providers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DependencyManager.Core.Models
 {
@@ -13,33 +8,45 @@ namespace DependencyManager.Core.Models
         protected readonly IOperatingSystemProvider operatingSystem;
 
         public IEnumerable<string> Dependencies { get; }
-        public string Name { get; }
+        public string? Name { get; }
         public string PackageName { get; }
 
         public SoftwarePackage(
             KeyValuePair<object, object> yaml,
             ISoftwareProvider provider,
-            IOperatingSystemProvider operatingSystem,
-            IEnumerable<string> additionalDependencies = null)
+            IOperatingSystemProvider operatingSystem)
         {
-            PackageName = yaml.Key as string;
-            var dict = yaml.Value as Dictionary<object, object>;
-
-            if (dict != null)
+            if (yaml.Key is string key)
             {
-                if (dict.ContainsKey("name"))
+                PackageName = key;
+            }
+            else
+            {
+                PackageName = string.Empty;
+                throw new Exception("YAML key is not a string");
+            }
+
+            if (yaml.Value is Dictionary<object, object> dict)
+            {
+                if (dict.ContainsKey("name") && dict["name"] is string name)
                 {
-                    Name = dict["name"] as string;
+                    Name = name;
                 }
 
                 if (dict.ContainsKey("dependencies"))
                 {
                     Dependencies = (from d in dict["dependencies"] as List<object>
-                                    select d as string).ToList();                }
+                                    select d as string).ToList();
+                }
             }
 
             this.provider = provider;
             this.operatingSystem = operatingSystem;
+
+            if (Dependencies == null)
+            {
+                Dependencies = Enumerable.Empty<string>();
+            }
         }
 
         public SoftwarePackage(
@@ -47,7 +54,7 @@ namespace DependencyManager.Core.Models
             IEnumerable<string> dependencies,
             ISoftwareProvider provider,
             IOperatingSystemProvider operatingSystem,
-            string name = null)
+            string? name = null)
         {
             PackageName = packageName;
             Dependencies = dependencies;
@@ -110,7 +117,7 @@ namespace DependencyManager.Core.Models
             T data,
             ISoftwareProvider provider,
             IOperatingSystemProvider operatingSystemProvider,
-            string name = null)
+            string? name = null)
             : base(packageName, dependencies, provider, operatingSystemProvider, name)
         {
             Data = data;

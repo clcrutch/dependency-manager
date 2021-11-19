@@ -1,5 +1,3 @@
-using System;
-
 namespace DependencyManager.Core
 {
     public class UserRequiredException : Exception

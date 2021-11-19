@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using DependencyManager.Core;
 using DependencyManager.Core.Models;
 using DependencyManager.Core.Providers;
@@ -27,7 +22,7 @@ namespace DependencyManager.Providers.Linux
         
         public override Task InitializeAsync()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public override Task<bool> InitializationPendingAsync() =>
@@ -44,7 +39,7 @@ namespace DependencyManager.Providers.Linux
             {
                 arguments += " --classic";
             }
-            
+
             var process = Process.Start(new ProcessStartInfo
             {
                 FileName = "snap",
@@ -53,31 +48,34 @@ namespace DependencyManager.Providers.Linux
                 CreateNoWindow = true
             });
 
-            await process.WaitForExitAsync();
-            var results = await process.StandardError.ReadToEndAsync();
-            var needsClassic = (from l in results.Split('\n', StringSplitOptions.RemoveEmptyEntries)
-                where l.Contains(CLASSIC_CHECK)
-                select l).Any();
-
-            if (needsClassic && !classic)
+            if (process != null)
             {
-                await InstallPackageInternalAsync(package, true);
-                return;
+                await process.WaitForExitAsync();
+                var results = await process.StandardError.ReadToEndAsync();
+                var needsClassic = (from l in results.Split('\n', StringSplitOptions.RemoveEmptyEntries)
+                                    where l.Contains(CLASSIC_CHECK)
+                                    select l).Any();
+
+                if (needsClassic && !classic)
+                {
+                    await InstallPackageInternalAsync(package, true);
+                    return;
+                }
             }
 
-            if (process.ExitCode != 0)
+            if (process == null || process.ExitCode != 0)
             {
                 throw new InstallFailedException();
             }
         }
 
         public override async Task<bool> TestPackageInstalledAsync(SoftwarePackage package) =>
-            (await GetInstalledPackagesAsync()).ContainsKey(package.PackageName);
+            (await GetInstalledPackagesAsync())?.ContainsKey(package.PackageName) ?? false;
 
         public override async Task<bool> TestPlatformAsync() =>
             !string.IsNullOrEmpty(await operatingSystemProvider.GetFullExecutablePathAsync("snap"));
         
-        private async Task<Dictionary<string, string>> GetInstalledPackagesAsync()
+        private async Task<Dictionary<string, string>?> GetInstalledPackagesAsync()
         {
             var process = Process.Start(new ProcessStartInfo
             {
@@ -87,13 +85,18 @@ namespace DependencyManager.Providers.Linux
                 CreateNoWindow = true
             });
 
-            await process.WaitForExitAsync();
-            var packageString = await process.StandardOutput.ReadToEndAsync();
-            var packageLines = packageString.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
+            if (process != null)
+            {
+                await process.WaitForExitAsync();
+                var packageString = await process.StandardOutput.ReadToEndAsync();
+                var packageLines = packageString.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
 
-            return (from l in packageLines.Skip(1)
-                where !string.IsNullOrWhiteSpace(l)
-                select l.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries)).ToDictionary(s => s[0], s => s[1]);
+                return (from l in packageLines.Skip(1)
+                        where !string.IsNullOrWhiteSpace(l)
+                        select l.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries)).ToDictionary(s => s[0], s => s[1]);
+            }
+
+            return null;
         }
     }
 }

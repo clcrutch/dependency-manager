@@ -1,12 +1,7 @@
 ﻿using DependencyManager.Core.Providers;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace DependencyManager.Providers.Windows
 {
@@ -18,7 +13,7 @@ namespace DependencyManager.Providers.Windows
         /// be examined. If the filename can't be found by Windows, null is returned.</summary>
         /// <param name="executable"></param>
         /// <returns>The full path if successful, or null otherwise.</returns>
-        public Task<string> GetFullExecutablePathAsync(string executable)
+        public Task<string?> GetFullExecutablePathAsync(string executable)
         {
             if (executable.Length >= MAX_PATH)
                 throw new ArgumentException($"The executable name '{executable}' must have less than {MAX_PATH} characters.",
@@ -26,7 +21,7 @@ namespace DependencyManager.Providers.Windows
 
             if (string.IsNullOrEmpty(Path.GetExtension(executable)))
             {
-                var fileNames = from e in Environment.GetEnvironmentVariable("PATHEXT").Split(';')
+                var fileNames = from e in Environment.GetEnvironmentVariable("PATHEXT")?.Split(';')
                                 select $"{executable}{e}";
 
                 foreach (var fileName in fileNames)
@@ -34,11 +29,11 @@ namespace DependencyManager.Providers.Windows
                     StringBuilder sb = new(fileName, MAX_PATH);
                     if (PathFindOnPath(sb, null))
                     {
-                        return Task.FromResult(sb.ToString());
+                        return Task.FromResult(sb?.ToString());
                     }
                 }
 
-                return Task.FromResult<string>(null);
+                return Task.FromResult<string?>(null);
             }
             else
             {
@@ -62,7 +57,7 @@ namespace DependencyManager.Providers.Windows
         // https://docs.microsoft.com/en-us/windows/desktop/api/shlwapi/nf-shlwapi-pathfindonpathw
         // https://www.pinvoke.net/default.aspx/shlwapi.PathFindOnPath
         [DllImport("shlwapi.dll", CharSet = CharSet.Unicode, SetLastError = false)]
-        static extern bool PathFindOnPath([In, Out] StringBuilder pszFile, [In] string[] ppszOtherDirs);
+        static extern bool PathFindOnPath([In, Out] StringBuilder pszFile, [In] string[]? ppszOtherDirs);
 
         // from MAPIWIN.h :
         private const int MAX_PATH = 260;
