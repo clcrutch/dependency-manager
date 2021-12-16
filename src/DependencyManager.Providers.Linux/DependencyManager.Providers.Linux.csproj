@@ -6,10 +6,6 @@
 		<Nullable>enable</Nullable>
     </PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-	</PropertyGroup>
-
 	<ItemGroup>
 	  <PackageReference Include="System.Composition.AttributedModel" Version="6.0.0" />
 	</ItemGroup>

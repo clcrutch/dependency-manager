@@ -6,10 +6,6 @@
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-	  <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-	</PropertyGroup>
-
 	<ItemGroup>
 		<PackageReference Include="Nerdbank.GitVersioning" Version="3.4.244">
 			<PrivateAssets>all</PrivateAssets>
