@@ -16,4 +16,4 @@ windows:
     visualstudio2019community:
     visualstudio2019-workload-netcoretools:
     vscode:
-        name: vscode # Dependency of eamodio.gitlens and VisualStudioExptTeam.vscodeintellicode
+        name: vscode # Dependency of eamodio.gitlens and VisualStudioExptTeam.vscodeintellicode 
