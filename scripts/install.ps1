@@ -1,8 +1,3 @@
-param (
-    [Parameter(Mandatory=$true)]
-    [string]$URL
-)
-
 function Invoke-InstallScript {
     param (
         [Parameter(Mandatory=$true)]
@@ -46,5 +41,3 @@ function Invoke-InstallScript {
     Pop-Location
     Pop-Location
 }
-
-Invoke-InstallScript -URL $URL
