@@ -14,4 +14,10 @@
 		<PackageReference Include="Serilog" Version="2.10.0" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Update="dependencies.yaml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
 </Project>
