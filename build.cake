@@ -76,7 +76,7 @@ Task("GitHub-Push")
     .Does(() =>
 {
     var versionTag = $"v{GitVersioningGetVersion().SemVer2}";
-    var message = GitLogTip("./").MessageShort;
+    var message = "Test Message"; //GitLogTip("./").MessageShort;
     
     StartProcess("gh", new ProcessSettings {
         Arguments = new ProcessArgumentBuilder()
