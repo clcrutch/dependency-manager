@@ -53,7 +53,7 @@ Then run `depend install` as in an admin command prompt.  Based on your platform
 
 ## Install from URL
 ```PowerShell
-$URL = "<URL>"; Invoke-Expression (Invoke-WebRequest https://raw.githubusercontent.com/clcrutch/dependency-manager/master/scripts/install.ps1).Content; Invoke-InstallScript -URL $URL
+$URL = "==URL=="; Invoke-Expression (Invoke-WebRequest https://raw.githubusercontent.com/clcrutch/dependency-manager/master/scripts/install.ps1).Content; Invoke-InstallScript -URL $URL
 ```
 
-Replace <URL> with your URL in the above expression.
+Replace ==URL== with your URL in the above expression.
