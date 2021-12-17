@@ -10,7 +10,7 @@ namespace DependencyManager.Lib
 {
     public class Executor
     {
-        private readonly SemaphoreSlim servicesSemaphore = new SemaphoreSlim(1);
+        private readonly SemaphoreSlim servicesSemaphore = new(1);
         private IServiceProvider? services;
 
         public async Task InstallAsync()

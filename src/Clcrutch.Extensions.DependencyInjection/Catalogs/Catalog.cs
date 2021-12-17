@@ -1,11 +1,14 @@
 ﻿using Clcrutch.Linq;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 using System.Composition;
 
 namespace Clcrutch.Extensions.DependencyInjection.Catalogs
 {
     public abstract class Catalog
     {
+        public abstract string Name { get; }
+
         protected IServiceCollection ServiceCollection { get; }
 
         protected Catalog()
@@ -47,14 +50,16 @@ namespace Clcrutch.Extensions.DependencyInjection.Catalogs
         protected virtual async Task<IEnumerable<Type>> GetContainedTypesAsync() =>
             await GetAvailableTypesAsync()
                 .Cast()
-                .Where(t => t.CustomAttributes.Any(x => x.AttributeType.IsSubclassOf(typeof(ExportAttribute))))
+                .Where(t => t.CustomAttributes.Any(x => x.AttributeType == (typeof(ExportAttribute))))
                 .Where(t => TestOperatingSystemAsync(t))
                 .ToArrayAsync();
 
         private async Task<bool> TestOperatingSystemAsync(Type containedType)
         {
             if (containedType.CustomAttributes.All(x => !x.AttributeType.IsSubclassOf(typeof(OperatingSystemRequiredAttribute))))
-            { 
+            {
+                Log.Debug("{name} does not require specific operating system.", containedType.Name);
+
                 return true;
             }
 
@@ -62,6 +67,8 @@ namespace Clcrutch.Extensions.DependencyInjection.Catalogs
                                                select a.OperatingSystemCheckerTypes)
                                                .SelectMany(x => x)
                                                .ToArray();
+
+            Log.Debug("{operatingSystemCheckerTypes} types were found for checking the current operating system for {type}.", operatingSystemCheckerTypes, containedType.Name);
 
             var sync = from m in operatingSystemCheckerTypes.SelectMany(t => t.GetMethods())
                        where (m.Name.Equals("Test", StringComparison.OrdinalIgnoreCase) || m.Name.Equals("Check", StringComparison.OrdinalIgnoreCase)) &&

@@ -27,10 +27,4 @@
 		<ProjectReference Include="..\DependencyManager.Providers.Default\DependencyManager.Providers.Default.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<None Update="dependencies.yaml">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
-
 </Project>
