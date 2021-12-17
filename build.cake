@@ -75,13 +75,7 @@ Task("GitHub-Push")
     .WithCriteria(!string.IsNullOrWhiteSpace(EnvironmentVariable("GITHUB_TOKEN")))
     .Does(() =>
 {
-    var token = EnvironmentVariable("GITHUB_TOKEN");
-    var version = GitVersioningGetVersion().SemVer2;
-    var versionTag = $"v{version}";
-
-    GitTag("./", versionTag);
-    GitPushRef("./", "clcrutch", token, "origin", versionTag);
-
+    var versionTag = $"v{GitVersioningGetVersion().SemVer2}";
     var message = GitLogTip("./").MessageShort;
     
     StartProcess("gh", new ProcessSettings {
