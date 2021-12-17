@@ -50,3 +50,10 @@ windows10:
 ```
 
 Then run `depend install` as in an admin command prompt.  Based on your platform/architecture/version, the above file will be transformed to install the relevant packages.
+
+## Install from URL
+```PowerShell
+$URL = "<URL>"; Invoke-Expression (Invoke-WebRequest https://raw.githubusercontent.com/clcrutch/dependency-manager/master/scripts/install.ps1).Content; Invoke-InstallScript -URL $URL
+```
+
+Replace <URL> with your URL in the above expression.
