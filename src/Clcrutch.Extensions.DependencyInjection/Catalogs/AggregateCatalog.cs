@@ -6,6 +6,8 @@ namespace Clcrutch.Extensions.DependencyInjection.Catalogs
 {
     public class AggregateCatalog : Catalog
     {
+        public override string Name => string.Join(", ", Catalogs.Select(x => x.Name));
+
         protected Catalog[] Catalogs { get; }
 
         public AggregateCatalog(params Catalog[] catalogs)

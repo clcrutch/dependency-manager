@@ -11,6 +11,7 @@ namespace DependencyManager
         {
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console()
+                //.MinimumLevel.Debug()
                 .CreateLogger();
 
             try
