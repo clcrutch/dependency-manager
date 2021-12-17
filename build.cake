@@ -76,27 +76,35 @@ Task("GitHub-Push")
     .Does(() =>
 {
     var versionTag = $"v{GitVersioningGetVersion().SemVer2}";
-    var message = "Test Message"; //GitLogTip("./").MessageShort;
-    
-    StartProcess("gh", new ProcessSettings {
-        Arguments = new ProcessArgumentBuilder()
-            .Append("release")
-            .Append("create")
-            .Append(versionTag)
-            .Append("-p")
-            .Append("-n")
-            .Append($"\"{message}\"")
-    });
-
-    foreach (var operatingSystem in operatingSystems)
+    using(var process = StartAndReturnProcess("git", new ProcessSettings
+        {
+            Arguments = "log -n 1 --pretty=format:%s",
+            RedirectStandardOutput = true
+        }))
     {
+        process.WaitForExit();
+        var message = string.Join("\n", process.GetStandardOutput());
+    
         StartProcess("gh", new ProcessSettings {
             Arguments = new ProcessArgumentBuilder()
                 .Append("release")
-                .Append("upload")
+                .Append("create")
                 .Append(versionTag)
-                .Append($"./{operatingSystem}.zip")
+                .Append("-p")
+                .Append("-n")
+                .Append($"\"{message}\"")
         });
+
+        foreach (var operatingSystem in operatingSystems)
+        {
+            StartProcess("gh", new ProcessSettings {
+                Arguments = new ProcessArgumentBuilder()
+                    .Append("release")
+                    .Append("upload")
+                    .Append(versionTag)
+                    .Append($"./{operatingSystem}.zip")
+            });
+        }
     }
 });
 
