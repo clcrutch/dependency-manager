@@ -1,0 +1,19 @@
+﻿all: # This names the block
+  platform: all
+  architecture: all
+  vscode:
+    eamodio.gitlens:
+        dependencies:
+          - vscode # Sets up a dependency on the named package
+    VisualStudioExptTeam.vscodeintellicode:
+        dependencies:
+          - vscode
+
+windows:
+  platform: windows
+  architecture: all
+  chocolatey:
+    visualstudio2019community:
+    visualstudio2019-workload-netcoretools:
+    vscode:
+        name: vscode # Dependency of eamodio.gitlens and VisualStudioExptTeam.vscodeintellicode
