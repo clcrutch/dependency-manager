@@ -17,6 +17,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Clcrutch.Extensions.DependencyInjection\Clcrutch.Extensions.DependencyInjection.csproj" />
 		<ProjectReference Include="..\Clcrutch.Linq\Clcrutch.Linq.csproj" />
 		<ProjectReference Include="..\DependencyManager.Core\DependencyManager.Core.csproj" />
 	</ItemGroup>

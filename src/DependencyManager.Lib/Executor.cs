@@ -45,7 +45,7 @@ namespace DependencyManager.Lib
                 new AssemblyCatalog(typeof(VSCodeSoftwareProvider).Assembly, services)
             );
 
-            return catalog.GetServiceProvider();
+            return catalog.GetServiceProviderAsync();
         }
     }
 }

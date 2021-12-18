@@ -10,6 +10,7 @@ namespace Clcrutch.Extensions.DependencyInjection.Catalogs
         public abstract string Name { get; }
 
         protected IServiceCollection ServiceCollection { get; }
+        protected IServiceProvider? ServiceProvider { get; set; }
 
         protected Catalog()
             : this(new ServiceCollection()) { }
@@ -19,30 +20,36 @@ namespace Clcrutch.Extensions.DependencyInjection.Catalogs
             ServiceCollection = serviceCollection;
         }
 
-        public async Task<IServiceProvider> GetServiceProvider()
+        public async Task<IServiceProvider> GetServiceProviderAsync()
         {
-            var types = await GetContainedTypesAsync();
-            foreach (var type in types)
+            if (ServiceProvider == null)
             {
-                var attributes = type.GetCustomAttributes(typeof(ExportAttribute), true);
-
-                if (attributes is ExportAttribute[] exportAttributes)
+                var types = await GetContainedTypesAsync();
+                foreach (var type in types)
                 {
-                    foreach (var exportAttribute in exportAttributes)
+                    var attributes = type.GetCustomAttributes(typeof(ExportAttribute), true);
+
+                    if (attributes is ExportAttribute[] exportAttributes)
                     {
-                        if (exportAttribute.ContractType != null)
+                        foreach (var exportAttribute in exportAttributes)
                         {
-                            ServiceCollection.AddTransient(exportAttribute.ContractType, type);
-                        }
-                        else
-                        {
-                            ServiceCollection.AddTransient(type);
+                            if (exportAttribute.ContractType != null)
+                            {
+                                ServiceCollection.AddTransient(exportAttribute.ContractType, type);
+                            }
+                            else
+                            {
+                                ServiceCollection.AddTransient(type);
+                            }
                         }
                     }
                 }
+
+                ServiceCollection.AddSingleton(this);
+                ServiceProvider = ServiceCollection.BuildServiceProvider();
             }
 
-            return ServiceCollection.BuildServiceProvider();
+            return ServiceProvider;
         }
 
         protected internal abstract Task<IEnumerable<Type>> GetAvailableTypesAsync();

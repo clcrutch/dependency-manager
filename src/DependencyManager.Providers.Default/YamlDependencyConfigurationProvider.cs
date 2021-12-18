@@ -1,4 +1,5 @@
-﻿using Clcrutch.Linq;
+﻿using Clcrutch.Extensions.DependencyInjection.Catalogs;
+using Clcrutch.Linq;
 using DependencyManager.Core.Providers;
 using System.Composition;
 using YamlDotNet.Serialization;
@@ -8,13 +9,11 @@ namespace DependencyManager.Providers.Default
     [Export(typeof(IDependencyConfigurationProvider))]
     public class YamlDependencyConfigurationProvider : IDependencyConfigurationProvider
     {
-        private readonly IEnumerable<IPlatformProvider> platformProviders;
-        private readonly IEnumerable<IArchitectureProvider> architectureProviders;
+        private readonly Catalog catalog;
 
-        public YamlDependencyConfigurationProvider(IEnumerable<IPlatformProvider> platformProviders, IEnumerable<IArchitectureProvider> architectureProviders)
+        public YamlDependencyConfigurationProvider(Catalog catalog)
         {
-            this.platformProviders = platformProviders;
-            this.architectureProviders = architectureProviders;
+            this.catalog = catalog;
         }
 
         public async Task<Dictionary<object, object>> GetSoftwareConfigurationAsync()
@@ -32,8 +31,13 @@ namespace DependencyManager.Providers.Default
                 .Build();
 
             Dictionary<object, object> sections = deserializer.Deserialize<dynamic>(await reader.ReadToEndAsync());
+
+            var serviceProvider = await catalog.GetServiceProviderAsync();
+            var platformProviders = serviceProvider.GetService(typeof(IEnumerable<IPlatformProvider>)) as IEnumerable<IPlatformProvider>;
+            var architectureProviders = serviceProvider.GetService(typeof(IEnumerable<IArchitectureProvider>)) as IEnumerable<IArchitectureProvider>;
+
             var relevantSections = await sections
-                                    .Where(s => TestIfRelevantAsync(s.Value))
+                                    .Where(s => TestIfRelevantAsync(s.Value, platformProviders, architectureProviders))
                                     .Select(s => s.Value as IEnumerable<KeyValuePair<object, object>>)
                                     .SelectMany(s => s ?? Enumerable.Empty<KeyValuePair<object, object>>())
                                     .Where(g => g.Key.ToString() != "platform" && g.Key.ToString() != "architecture" && g.Key.ToString() != "version")
@@ -70,15 +74,15 @@ namespace DependencyManager.Providers.Default
             return @return;
         }
 
-        private async Task<bool> TestIfRelevantAsync(object obj)
+        private async Task<bool> TestIfRelevantAsync(object obj, IEnumerable<IPlatformProvider>? platformProviders, IEnumerable<IArchitectureProvider>? architectureProviders)
         {
             if (obj is Dictionary<object, object> dict)
             {
                 var platform = dict["platform"] as string;
                 var arch = dict["architecture"] as string;
 
-                var platformProvider = platformProviders.SingleOrDefault(x => x.Name.Equals(platform, StringComparison.OrdinalIgnoreCase));
-                var archProvider = architectureProviders.SingleOrDefault(x => x.Name.Equals(arch, StringComparison.OrdinalIgnoreCase));
+                var platformProvider = platformProviders?.SingleOrDefault(x => x.Name.Equals(platform, StringComparison.OrdinalIgnoreCase));
+                var archProvider = architectureProviders?.SingleOrDefault(x => x.Name.Equals(arch, StringComparison.OrdinalIgnoreCase));
 
                 if (platformProvider == null || archProvider == null)
                 {
