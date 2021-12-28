@@ -1,4 +1,9 @@
-﻿all: # This names the block
+﻿plugins:
+  - name: package
+    version: "1.0"
+    url: https://test.com
+
+all: # This names the block
   platform: all
   architecture: all
   vscode:

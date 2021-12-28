@@ -32,6 +32,38 @@ namespace DependencyManager.Providers.Default
 
             Dictionary<object, object> sections = deserializer.Deserialize<dynamic>(await reader.ReadToEndAsync());
 
+            if (sections.ContainsKey("plugins"))
+            {
+                if (sections["plugins"] is List<object> plugins)
+                {
+                    foreach (var plugin in plugins)
+                    {
+                        if (plugin is IDictionary<object, object> dict)
+                        {
+                            string? name = null;
+                            string? version = null;
+                            string? url = null;
+
+                            if (dict.ContainsKey("name"))
+                            {
+                                name = dict["name"] as string;
+                            }
+
+                            if (dict.ContainsKey("version"))
+                            {
+                                version = dict["version"] as string;
+                            }
+
+                            if (dict.ContainsKey("url"))
+                            {
+                                url = dict["url"] as string;
+                            }
+                        }
+                    }
+                }
+
+            }
+
             var serviceProvider = await catalog.GetServiceProviderAsync();
             var platformProviders = serviceProvider.GetService(typeof(IEnumerable<IPlatformProvider>)) as IEnumerable<IPlatformProvider>;
             var architectureProviders = serviceProvider.GetService(typeof(IEnumerable<IArchitectureProvider>)) as IEnumerable<IArchitectureProvider>;
