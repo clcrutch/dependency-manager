@@ -21,7 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyManager.Providers
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyManager.Providers.Npm", "src\DependencyManager.Providers.Npm\DependencyManager.Providers.Npm.csproj", "{73299518-D7F8-40CF-9EEE-D1B3092D5D91}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clcrutch.Extensions.DependencyInjection", "src\Clcrutch.Extensions.DependencyInjection\Clcrutch.Extensions.DependencyInjection.csproj", "{A965EC4B-FE8B-4F65-9687-66AC48783F4C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clcrutch.Extensions.DependencyInjection", "src\Clcrutch.Extensions.DependencyInjection\Clcrutch.Extensions.DependencyInjection.csproj", "{A965EC4B-FE8B-4F65-9687-66AC48783F4C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyManager.Providers.DotNet", "src\DependencyManager.Providers.DotNet\DependencyManager.Providers.DotNet.csproj", "{9E49554F-4125-47D5-A0F1-D7B1C1F10689}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +71,10 @@ Global
 		{A965EC4B-FE8B-4F65-9687-66AC48783F4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A965EC4B-FE8B-4F65-9687-66AC48783F4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A965EC4B-FE8B-4F65-9687-66AC48783F4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E49554F-4125-47D5-A0F1-D7B1C1F10689}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E49554F-4125-47D5-A0F1-D7B1C1F10689}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E49554F-4125-47D5-A0F1-D7B1C1F10689}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E49554F-4125-47D5-A0F1-D7B1C1F10689}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
