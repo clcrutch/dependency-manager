@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using DependencyManager.Providers.Linux;
 using DependencyManager.Providers.Npm;
 using Clcrutch.Extensions.DependencyInjection.Catalogs;
+using DependencyManager.Providers.DotNet;
 
 namespace DependencyManager.Lib
 {
@@ -42,7 +43,8 @@ namespace DependencyManager.Lib
                 new AssemblyCatalog(typeof(WindowsOperatingSystemProvider).Assembly, services),
                 new AssemblyCatalog(typeof(LinuxOperatingSystemProvider).Assembly, services),
                 new AssemblyCatalog(typeof(NpmSoftwareProvider).Assembly, services),
-                new AssemblyCatalog(typeof(VSCodeSoftwareProvider).Assembly, services)
+                new AssemblyCatalog(typeof(VSCodeSoftwareProvider).Assembly, services),
+                new AssemblyCatalog(typeof(DotNetSoftwareProvider).Assembly, services)
             );
 
             return catalog.GetServiceProvider();

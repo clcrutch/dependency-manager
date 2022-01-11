@@ -21,6 +21,7 @@
 		<ProjectReference Include="..\Clcrutch.Linq\Clcrutch.Linq.csproj" />
 		<ProjectReference Include="..\DependencyManager.Core\DependencyManager.Core.csproj" />
 		<ProjectReference Include="..\DependencyManager.Providers.Default\DependencyManager.Providers.Default.csproj" />
+		<ProjectReference Include="..\DependencyManager.Providers.DotNet\DependencyManager.Providers.DotNet.csproj" />
 		<ProjectReference Include="..\DependencyManager.Providers.Linux\DependencyManager.Providers.Linux.csproj" />
 		<ProjectReference Include="..\DependencyManager.Providers.Npm\DependencyManager.Providers.Npm.csproj" />
 		<ProjectReference Include="..\DependencyManager.Providers.VSCode\DependencyManager.Providers.VSCode.csproj" />
