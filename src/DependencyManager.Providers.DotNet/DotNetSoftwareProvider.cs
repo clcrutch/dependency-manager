@@ -56,7 +56,7 @@ namespace DependencyManager.Providers.DotNet
                 throw new ArgumentNullException(nameof(package));
             }
 
-            if (package.Name == null)
+            if (package.PackageName == null)
             {
                 throw new ArgumentNullException(nameof(package.PackageName));
             }
@@ -64,7 +64,7 @@ namespace DependencyManager.Providers.DotNet
             // dotnet tool list --global
             var process = Process.Start(new ProcessStartInfo
             {
-                FileName = await operatingSystemProvider.GetFullExecutablePathAsync("npm"),
+                FileName = await operatingSystemProvider.GetFullExecutablePathAsync("dotnet"),
                 Arguments = $"tool list --global",
                 RedirectStandardOutput = true,
             });
