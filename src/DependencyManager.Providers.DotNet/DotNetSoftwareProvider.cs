@@ -58,7 +58,7 @@ namespace DependencyManager.Providers.DotNet
 
             if (package.Name == null)
             {
-                throw new ArgumentNullException(nameof(package.Name));
+                throw new ArgumentNullException(nameof(package.PackageName));
             }
 
             // dotnet tool list --global
@@ -77,7 +77,7 @@ namespace DependencyManager.Providers.DotNet
             await process.WaitForExitAsync();
             var results = await process.StandardOutput.ReadToEndAsync();
 
-            return results.Contains(package.Name, StringComparison.InvariantCultureIgnoreCase);
+            return results.Contains(package.PackageName, StringComparison.InvariantCultureIgnoreCase);
         }
 
         public override async Task<bool> TestPlatformAsync() =>
