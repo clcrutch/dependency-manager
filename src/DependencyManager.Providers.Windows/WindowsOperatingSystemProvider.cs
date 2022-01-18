@@ -1,5 +1,6 @@
 ﻿using Clcrutch.Extensions.DependencyInjection;
 using DependencyManager.Core.Providers;
+using Microsoft.Win32;
 using System.Composition;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
@@ -22,6 +23,8 @@ namespace DependencyManager.Providers.Windows
             if (executable.Length >= MAX_PATH)
                 throw new ArgumentException($"The executable name '{executable}' must have less than {MAX_PATH} characters.",
                     nameof(executable));
+
+            UpdatePathEnvironmentVariable();
 
             if (string.IsNullOrEmpty(Path.GetExtension(executable)))
             {
@@ -56,6 +59,62 @@ namespace DependencyManager.Providers.Windows
             }
 
             throw new NotSupportedException();
+        }
+
+        private void UpdatePathEnvironmentVariable()
+        {
+            var scopes = new EnvironmentVariableTarget[]
+            {
+                EnvironmentVariableTarget.Machine,
+                EnvironmentVariableTarget.User
+            };
+
+            var paths = (from s in scopes
+                         select GetEnvironmentVariable("PATH", s)?.Split(';', StringSplitOptions.RemoveEmptyEntries))
+                         .SelectMany(x => x)
+                         .Distinct();
+
+            Environment.SetEnvironmentVariable("PATH", string.Join(';', paths), EnvironmentVariableTarget.Process);
+        }
+
+        private string? GetEnvironmentVariable(string name, EnvironmentVariableTarget scope, bool preserveVariables = false)
+        {
+            if (!OperatingSystem.IsWindows())
+            {
+                throw new PlatformNotSupportedException();
+            }
+
+            const string MACHINE_ENVIRONMENT_REGISTRY_KEY_NAME = @"SYSTEM\CurrentControlSet\Control\Session Manager\Environment\";
+            const string USER_ENVIRONMENT_REGISTRY_KEY_NAME = "Environment";
+
+            using RegistryKey? userRegistryKey = Registry.CurrentUser.OpenSubKey(USER_ENVIRONMENT_REGISTRY_KEY_NAME);
+            using RegistryKey? machineRegistryKey = Registry.LocalMachine.OpenSubKey(MACHINE_ENVIRONMENT_REGISTRY_KEY_NAME);
+            RegistryKey? win32RegistryKey = null;
+            switch (scope)
+            {
+                case EnvironmentVariableTarget.Process:
+                    return Environment.GetEnvironmentVariable(name);
+                case EnvironmentVariableTarget.User:
+                    win32RegistryKey = Registry.CurrentUser.OpenSubKey(USER_ENVIRONMENT_REGISTRY_KEY_NAME);
+                    break;
+                case EnvironmentVariableTarget.Machine:
+                    win32RegistryKey = Registry.LocalMachine.OpenSubKey(MACHINE_ENVIRONMENT_REGISTRY_KEY_NAME);
+                    break;
+            }
+
+            var registryValueOptions = RegistryValueOptions.None;
+            if (preserveVariables)
+            {
+                registryValueOptions = RegistryValueOptions.DoNotExpandEnvironmentNames;
+            }
+
+            string? value = null;
+            if (win32RegistryKey != null)
+            {
+                value = (string?)win32RegistryKey.GetValue(name, registryValueOptions);
+            }
+
+            return value ?? Environment.GetEnvironmentVariable(name, scope);
         }
 
         // https://docs.microsoft.com/en-us/windows/desktop/api/shlwapi/nf-shlwapi-pathfindonpathw

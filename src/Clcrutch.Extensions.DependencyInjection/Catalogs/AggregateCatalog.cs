@@ -1,5 +1,4 @@
-﻿using Clcrutch.Linq;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
 namespace Clcrutch.Extensions.DependencyInjection.Catalogs

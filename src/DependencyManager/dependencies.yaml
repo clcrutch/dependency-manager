@@ -1,0 +1,14 @@
+﻿all:
+  platform: all
+  architecture: all
+  vscode:
+    cake-build.cake-vscode:
+        dependencies:
+            - vscode
+
+windows:
+  platform: windows
+  architecture: all
+  chocolatey:
+    vscode:
+        name: vscode

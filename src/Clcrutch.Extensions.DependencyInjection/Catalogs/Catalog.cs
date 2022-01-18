@@ -75,13 +75,14 @@ namespace Clcrutch.Extensions.DependencyInjection.Catalogs
                                 m.ReturnType.IsAssignableTo(typeof(bool))
                        select (bool?)m.Invoke(Activator.CreateInstance(m.DeclaringType ?? typeof(object)), null) ?? false;
 
-            var async = await Task.WhenAll(from m in operatingSystemCheckerTypes.SelectMany(t => t.GetMethods())
-                                           where (m.Name.Equals("Test", StringComparison.OrdinalIgnoreCase) || m.Name.Equals("Check", StringComparison.OrdinalIgnoreCase) ||
-                                                   m.Name.Equals("TestAsync", StringComparison.OrdinalIgnoreCase) || m.Name.Equals("CheckAsync", StringComparison.OrdinalIgnoreCase)) &&
-                                                    m.ReturnType.IsAssignableTo(typeof(Task<bool>))
-                                           select (Task<bool>?)m.Invoke(Activator.CreateInstance(m.DeclaringType ?? typeof(object)), null) ?? Task.FromResult<bool>(false));
+            var async = operatingSystemCheckerTypes
+                            .SelectMany(t => t.GetMethods())
+                            .Where(m => (m.Name.Equals("Test", StringComparison.OrdinalIgnoreCase) || m.Name.Equals("Check", StringComparison.OrdinalIgnoreCase) ||
+                                                    m.Name.Equals("TestAsync", StringComparison.OrdinalIgnoreCase) || m.Name.Equals("CheckAsync", StringComparison.OrdinalIgnoreCase)) &&
+                                                    m.ReturnType.IsAssignableTo(typeof(Task<bool>)))
+                            .Select(m => (Task<bool>?)m.Invoke(Activator.CreateInstance(m.DeclaringType ?? typeof(object)), null) ?? Task.FromResult<bool>(false));
 
-            return sync.Concat(async).Any(x => x);
+            return await sync.Concat(async).AnyAsync();
         }
     }
 }

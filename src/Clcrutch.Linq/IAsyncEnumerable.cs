@@ -2,6 +2,33 @@
 {
     public static class IAsyncEnumerable
     {
+        public static async Task<bool> AnyAsync(this IAsyncEnumerable<bool> @this)
+        {
+            var enumerator = @this.GetAsyncEnumerator();
+            while (await enumerator.MoveNextAsync())
+            {
+                if (enumerator.Current)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static async Task<int> Count<T>(this IAsyncEnumerable<T> @this)
+        {
+            int count = 0;
+
+            var enumerator = @this.GetAsyncEnumerator();
+            while (await enumerator.MoveNextAsync())
+            {
+                count++;
+            }
+
+            return count;
+        }
+
         public static async IAsyncEnumerable<TResult> Select<TSource, TResult>(this IAsyncEnumerable<TSource> @this, Func<TSource, TResult> selector)
         {
             var enumerator = @this.GetAsyncEnumerator();

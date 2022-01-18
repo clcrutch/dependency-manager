@@ -82,6 +82,9 @@ namespace DependencyManager.Core.Models
             return await provider.TestPackageInstalledAsync(this);
         }
 
+        public virtual Task<bool> TestPlatformAsync() =>
+            provider.TestPlatformAsync();
+
         private async Task InitializeAsync()
         {
             if (await provider.InitializationPendingAsync())

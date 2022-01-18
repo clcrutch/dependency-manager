@@ -19,7 +19,6 @@ namespace DependencyManager.Lib
         public async Task InstallAsync()
         {
             var softwarePackages = await softwareInstallationProviders
-                                    .Where(s => s.TestPlatformAsync())
                                     .Select(s => s.GetSoftwarePackagesAsync())
                                     .Where(s => s != null)
                                     .SelectMany(s => s)
@@ -56,7 +55,12 @@ namespace DependencyManager.Lib
                     await InstallSoftwarePackageAsync(depend, packagesByName);
                 }
             }
-            
+
+            if (!await package.TestPlatformAsync())
+            {
+                return;
+            }
+
             if (!await package.TestInstalledAsync())
             {
                 await package.InstallAsync();

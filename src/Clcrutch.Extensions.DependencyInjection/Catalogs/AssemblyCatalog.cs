@@ -12,7 +12,7 @@ namespace Clcrutch.Extensions.DependencyInjection.Catalogs
     {
         public Assembly Assembly { get; set; }
 
-        public override string Name => Assembly.GetName().Name;
+        public override string Name => Assembly?.GetName()?.Name ?? String.Empty;
 
         public AssemblyCatalog(Assembly assembly)
             : this(assembly, new ServiceCollection())
