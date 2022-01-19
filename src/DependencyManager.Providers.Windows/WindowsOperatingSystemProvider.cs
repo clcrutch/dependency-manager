@@ -61,7 +61,7 @@ namespace DependencyManager.Providers.Windows
             throw new NotSupportedException();
         }
 
-        private void UpdatePathEnvironmentVariable()
+        public void UpdatePathEnvironmentVariable()
         {
             var scopes = new EnvironmentVariableTarget[]
             {

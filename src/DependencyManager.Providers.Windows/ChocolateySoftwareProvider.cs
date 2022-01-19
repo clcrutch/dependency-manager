@@ -38,10 +38,10 @@ namespace DependencyManager.Providers.Windows
             powershell.AddScript(script);
             await powershell.InvokeAsync();
 
-            Environment.SetEnvironmentVariable("PATH",
-                $"{Environment.GetEnvironmentVariable("Path", EnvironmentVariableTarget.Machine)};" +
-                $"{Environment.GetEnvironmentVariable("Path", EnvironmentVariableTarget.User)};" +
-                $"{Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "chocolatey", "bin")}");
+            if (operatingSystemProvider is WindowsOperatingSystemProvider windowsOperatingSystemProvider)
+            {
+                windowsOperatingSystemProvider.UpdatePathEnvironmentVariable();
+            }
         }
 
         public override async Task<bool> InitializationPendingAsync() =>
@@ -50,7 +50,7 @@ namespace DependencyManager.Providers.Windows
         public override async Task InstallPackageAsync(SoftwarePackage package)
         {
             string arguments;
-            if (false && await GetUpgradePending(package.PackageName))
+            if (await GetUpgradePending(package.PackageName))
             {
                 arguments = $"upgrade {package.PackageName} -y";
             }
@@ -151,7 +151,7 @@ namespace DependencyManager.Providers.Windows
 
             if (!installedPackages.ContainsKey(package))
             {
-                return true;
+                return false;
             }
 
             var latestVersion = await GetLatestVersionAsync(package);

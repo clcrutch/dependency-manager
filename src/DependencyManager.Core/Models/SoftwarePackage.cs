@@ -63,6 +63,9 @@ namespace DependencyManager.Core.Models
             this.operatingSystem = operatingSystem;
         }
 
+        public virtual Task<bool> InitializationPendingAsync() =>
+            provider.InitializationPendingAsync();
+
         public virtual async Task InstallAsync()
         {
             await InitializeAsync();

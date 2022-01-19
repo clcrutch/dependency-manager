@@ -20,6 +20,12 @@ namespace DependencyManager.Lib
             await (services.GetService<InstallExecutor>()?.InstallAsync() ?? Task.CompletedTask);
         }
 
+        public async Task<bool> TestAsync()
+        {
+            var services = await GetServiceProviderAsync();
+            return await (services.GetService<TestExecutor>()?.TestAsync() ?? Task.FromResult(false));
+        }
+
         private async Task<IServiceProvider> GetServiceProviderAsync()
         {
             await servicesSemaphore.WaitAsync();

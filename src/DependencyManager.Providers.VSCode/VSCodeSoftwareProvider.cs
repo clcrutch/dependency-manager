@@ -20,8 +20,8 @@ namespace DependencyManager.Providers.VSCode
         {
         }
 
-        public override Task<bool> InitializationPendingAsync() =>
-            Task.FromResult(false);
+        public override async Task<bool> InitializationPendingAsync() =>
+            string.IsNullOrEmpty(await operatingSystemProvider.GetFullExecutablePathAsync("code"));
 
         public override Task InitializeAsync()
         {
