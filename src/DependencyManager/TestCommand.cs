@@ -45,6 +45,8 @@ namespace DependencyManager
                 throw;
 #endif
             }
+
+            return 1;
         }
     }
 }
