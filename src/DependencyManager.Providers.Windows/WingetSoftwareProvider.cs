@@ -13,8 +13,8 @@ using System.Threading.Tasks;
 
 namespace DependencyManager.Providers.Windows
 {
-    [Export(typeof(ISoftwareProvider))]
-    [OperatingSystemRequired(OperatingSystems.Windows)]
+    // [Export(typeof(ISoftwareProvider))]
+    // [OperatingSystemRequired(OperatingSystems.Windows)]
     public class WingetSoftwareProvider : SoftwareProviderBase
     {
         public override PermissionRequirements RequiredPermissions => PermissionRequirements.User;

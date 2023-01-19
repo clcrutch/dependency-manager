@@ -46,10 +46,8 @@ namespace DependencyManager.Providers.Windows
         public override Task<bool> InitializationPendingAsync() =>
             Task.FromResult(false);
 
-        public override Task InitializeAsync()
-        {
-            throw new NotImplementedException();
-        }
+        public override Task InitializeAsync() =>
+            Task.CompletedTask;
 
         public override Task InstallPackageAsync(SoftwarePackage package)
         {
