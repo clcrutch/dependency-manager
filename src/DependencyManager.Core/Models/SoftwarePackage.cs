@@ -9,6 +9,7 @@ namespace DependencyManager.Core.Models
 
         public IEnumerable<string> Dependencies { get; }
         public string? Name { get; }
+        public string? Id { get; }
         public string PackageName { get; }
 
         public SoftwarePackage(
@@ -33,6 +34,11 @@ namespace DependencyManager.Core.Models
                     Name = name;
                 }
 
+                if (dict.ContainsKey("id") && dict["id"] is string id)
+                {
+                    Id = id;
+                }
+
                 if (dict.ContainsKey("dependencies"))
                 {
                     Dependencies = (from d in dict["dependencies"] as List<object>
@@ -54,13 +60,15 @@ namespace DependencyManager.Core.Models
             IEnumerable<string> dependencies,
             ISoftwareProvider provider,
             IOperatingSystemProvider operatingSystem,
-            string? name = null)
+            string? name = null,
+            string? id = null)
         {
             PackageName = packageName;
             Dependencies = dependencies;
             Name = name;
             this.provider = provider;
             this.operatingSystem = operatingSystem;
+            Id = id;
         }
 
         public virtual Task<bool> InitializationPendingAsync() =>
