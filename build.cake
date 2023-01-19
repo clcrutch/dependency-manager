@@ -25,7 +25,7 @@ Task("Build")
     .IsDependentOn("Clean")
     .Does(() =>
 {
-    DotNetBuild("./DependencyManager.sln", new DotNetCoreBuildSettings
+    DotNetBuild("./DependencyManager.sln", new DotNetBuildSettings
     {
         Configuration = configuration,
     });
@@ -35,7 +35,7 @@ Task("Test")
     .IsDependentOn("Build")
     .Does(() =>
 {
-    DotNetTest("./DependencyManager.sln", new DotNetCoreTestSettings
+    DotNetTest("./DependencyManager.sln", new DotNetTestSettings
     {
         Configuration = configuration,
         NoBuild = true,
@@ -63,7 +63,7 @@ Task("Pack")
     .IsDependentOn("Test")
     .Does(() =>
 {
-    DotNetPack("./DependencyManager.sln", new DotNetCorePackSettings
+    DotNetPack("./DependencyManager.sln", new DotNetPackSettings
     {
         Configuration = configuration,
         NoBuild = true
